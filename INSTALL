@@ -10,7 +10,7 @@ For Debian Linux, you should be able to run :
 sudo apt-get install libboost-dev libmorph-dev libmagickwand-dev g++ libxml-dev libnewmat10-dev
 
 To build, type:
-./bootstrap.sh
+./bootstrap
 ./configure
 make
 sudo make install
