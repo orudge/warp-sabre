@@ -1,0 +1,83 @@
+warp-sabre is a suite of programs to generate calibrated slippy map tiles
+from a variety of old maps, and the main program to generate the in-house
+mapping at SABRE Maps (https://www.sabre-roads.org.uk/maps).
+
+It is derived off a suite of OpenStreetMap tools called warp-gbos (that
+was used to produce the New Popular and Seventh Series tiles there,
+that pre-date SABRE Maps) with some extra bells and whistles to handle
+archaic things such as the MOT maps.
+
+==Features==
+
+The suite currently supports the following:
+
+    Ordnance Survey GB National Grid
+    WGS84 Lat/Lon
+    Cassini (as used on England and Wales MoT maps)
+    Scottish Bonne (as used on Scottish MoT maps)
+
+It does not currently support (but will in the future):
+
+    Ordnance Survey GB National Yard Grid (but conversion can be done manually)
+    Irish Grid as used on OSI and OSNI mapping
+    OSGB36 Lat/Lon
+
+==Programs==
+
+warp-sabre - combines a map image and calibration file to create a rectified
+map image and a Keyhole Markup Language (KML) file that can be loaded into
+Google Maps or Google Earth to check the accuracy of the calibration file
+
+gentiles - takes a group of rectified map images, with KML files, and creates
+all the tiles (may take hours, sometimes days, to run)
+
+cleartiles - takes a group of rectified map images, with KML files, and
+deletes all the associated tiles. This is important when doing small,
+incremental updates to a set of tiles with multiple maps; running cleartiles
+before gentiles makes sure that all tiles that need to be updated
+(particularly those that span the edge of maps) are re-created, but others
+are left alone.
+
+==Calibration file format==
+
+Calibration files are a series of comma separated values. Each co-ordinate is
+on one line. They look slightly different depending on whether you are using
+lat / lon or grid references.
+
+===Latitude / longitude===
+
+A lat / lon file looks something like this:
+p,51.8,-0.5,300,200
+p,51.8,-0.1,1200,200
+p,51.7,-0.5,300,900
+p,51.7,-0.1,1200,200
+
+The "p" tells the calibrator this is a lat / lon co-ordinate. The next
+values are the latitude and longitude of the point, followed by the x and y
+co-ordinate the point is on the map image.
+
+===Grid reference===
+
+A grid reference file looks something like this:
+os,400000:250000,300,200
+os,500000:250000,1200,200
+os,400000:150000,300,900
+os,500000:150000,1200,200
+
+The "os" tells the calibrator this is a grid reference co-ordinate. The next
+values are the metres east and metres north of the grid reference, followed by
+the x and y co-ordinate the point is on the map image. (Note, the grid
+reference values are separated by a colon, not a comma; this is because grid
+references can also be specified using the two letters + number format, which
+is not generally used by SABRE Maps).
+
+In both of the examples, the calibration defines the four corners of a
+map - top left, top right, bottom left and bottom right. The four corner
+co-ordinates are the most important ones to include in a calibration file,
+otherwise the map has no idea where it is supposed to be displayed in the
+world - at all.
+
+For information on how calibration files work, see :
+
+https://www-sabre-roads.org.uk/wiki/?title=SABRE_Maps/Calibrating
+

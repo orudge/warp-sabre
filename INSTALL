@@ -1,0 +1,16 @@
+The following libraries are required:
+* Boost - for odds and ends (mainly used for parsing command line arguments)
+* ImageMagick - for loading and saving images
+* LibXML - for parsing Google Earth KML files
+* Newmat - for the matrix transformations used when rectifying map images
+* Xmorph - does the job of physically moving pixels in an image when
+           rectifying it
+
+For Debian Linux, you should be able to run :
+sudo apt-get install libboost-dev libmorph-dev libmagickwand-dev g++ libxml-dev libnewmat10-dev
+
+To build, type:
+./bootstrap.sh
+./configure
+make
+sudo make install
