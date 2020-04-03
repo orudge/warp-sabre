@@ -4,7 +4,9 @@
 #include "ErrorHandling.h"
 #include <iostream>
 #include <math.h>
+#ifdef use_namespace
 using namespace NEWMAT;
+#endif
 //#define USE_OLD_POLYNOMIAL_EQ
 #define HIGHEST_ALLOWED_POLY 100
 
