@@ -11,7 +11,6 @@
 #include "ReadDelimitedFile.h"
 #include "GetBounds.h"
 #include "SourceKml.h"
-#include <time.h>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 

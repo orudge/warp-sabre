@@ -1,4 +1,5 @@
 #include "ImgMagick.h"
+#include <time.h>
 
 class SourceKml
 {

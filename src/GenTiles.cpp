@@ -10,7 +10,6 @@
 #include "ReadDelimitedFile.h"
 #include "GetBounds.h"
 #include "CopyPixels.h"
-#include <time.h>
 #include "SourceKml.h"
 #include <boost/program_options.hpp>
 #include <boost/thread.hpp>
