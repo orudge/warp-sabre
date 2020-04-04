@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "StringUtils.h"
+#include <boost/filesystem.hpp>
 
 string PackBeforeString(string baseString, string pack, int minLength)
 {
@@ -205,46 +206,14 @@ string RemoveFileExtension(string filename)
 
 string RemoveFilePath(string filename)
 {
-	//cout << "x" << endl;
-	//Determine length of extension
-	int len = strlen(filename.c_str());
-	int extensionOffset = -1;
-	for(int i=len;i>=0;i--)
-	{
-		if(filename[i] == '/')
-		{
-			extensionOffset = i+1;
-			i = -1;
-		}
-	}
-	//cout<<filename << "," << extensionOffset << endl;
-	if(extensionOffset < 0) //There is no extension
-		return filename;
-	
-	return filename.substr(extensionOffset, len-extensionOffset);
-
+	boost::filesystem::path p( filename );
+        return p.filename().string();
 }
 
 string GetFilePath(string filename)
 {
-	//cout << "x" << endl;
-	//Determine length of extension
-	int len = strlen(filename.c_str());
-	int extensionOffset = -1;
-	for(int i=len;i>=0;i--)
-	{
-		if(filename[i] == '/')
-		{
-			extensionOffset = i+1;
-			i = -1;
-		}
-	}
-	//cout<<filename << "," << extensionOffset << endl;
-	if(extensionOffset < 0) //There is no extension
-		return ".";
-	if(extensionOffset > 0) extensionOffset --;
-	
-	return filename.substr(0,extensionOffset);
+	boost::filesystem::path p( filename );        
+        return p.parent_path().string();
 }
 
 string FilenameChangeNumber(string filename, int num)

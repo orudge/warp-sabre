@@ -1,5 +1,6 @@
 
 #include "ReadKmlFile.h"
+#include "StringUtils.h"
 
 //pkg-config libxml++-2.6 --cflags --libs
 #include <libxml/parser.h>
@@ -156,7 +157,7 @@ int ReadKmlFile(const char *filename, class Tile &tileOut, string &imgFilenameOu
 		vector<string> empty;
 		processKml.ProcessNode(pNode, empty);
 
-		imgFilenameOut = processKml.imgFilename;
+		imgFilenameOut = RemoveFilePath( processKml.imgFilename );
 		tileOut = processKml.tile;
 
                 xmlFreeDoc( doc );
