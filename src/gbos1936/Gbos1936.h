@@ -20,7 +20,7 @@ double Lat_Long_H_to_Y(double PHI, double LAM, double H, double a, double b);
 double Lat_H_to_Z(double PHI, double LAM, double H, double a, double b);
 double E_N_to_Lat(double East, double North, double a, double b, double e0, double n0, double f0, double PHI0, double LAM0);
 double E_N_to_Long(double East, double North, double a, double b, double e0, double n0, double f0, double PHI0, double LAM0);
-double calc_M(double latdiff, double latsum, double nn, double eb);
+double calc_M(double latdiff, double latsum, double nn, double eb, double F0);
 
 void ConvertGbos1936ToWgs84(double ea, double no, double he,
 	double &latOut, double &lonOut, double &heOut);
@@ -40,7 +40,13 @@ void ConvertWgs84ToGbos1936LatLng(double lat, double lon, double he,
 	double &latOut, double &lngOut);
 void ConvertGbos1936LatLngToWgs84(double gboslat, double gboslon, double he,
 	double &latOut, double &lngOut, double &heOut);
+void ConvertOsi65ToWgs84(double osilat, double osilon, double &latOut, double &lngOut );
+void ConvertWgs84ToOsi65(double lat, double lon, double &latOut, double &lonOut );
+void GetOsiShift(double lat, double lon, double &latOut, double &lonOut );
+
 int TestGbos1936();
+
+
 
 class HelmertConverter
 {

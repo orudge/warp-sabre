@@ -718,11 +718,11 @@ void ConvertCasToWgs84(double ea, double no, double he,
 
 	long double lat_ = ((no - FN) / (a * F0)) + Lat0;
     	for( bool iter_complete = false; !iter_complete; ) {
-        	long double M = calc_M(lat_ - Lat0, lat_ + Lat0, N, b);
+        	long double M = calc_M(lat_ - Lat0, lat_ + Lat0, N, b, 1);
         	if (fabs(no - FN - M) >= 0.00000001) { lat_ = (((no - FN - M) / (a * F0)) + lat_); }
           	else { iter_complete = true; }
     	}
-	//long double M0 = calc_M( Lat0, Lon0, N, b );
+	//long double M0 = calc_M( Lat0, Lon0, N, b, 1 );
 	//long double M1 = M0 + no - FN;
 	//long double u1 = M1 / ( a * QQ );
 	//long double e1 = (1-(sqrt(1-e2))) / (1+(sqrt(1-e2)));
@@ -818,10 +818,58 @@ void ConvertGbos1936ToWgs84(double ea, double no, double he,
 void ConvertOsiToWgs84(double ea, double no, double he,
 	double &latOut, double &lonOut, double &heOut)
 {
-	double nioslat = E_N_to_Lat(ea,no, 6377340.18945, 6356034.44838, 200000, 250000, 0.999601272, 53.50000,-8.00000);
-	double nioslon = E_N_to_Long(ea,no, 6377340.18945, 6356034.44838, 200000, 250000, 0.999601272, 53.50000,-8.00000);
+  const double Pi = 3.14159265358979;
+  double a = 6377340.189446778;
+  double b = 6356034.448383377;
+  double n = ((a-b)/(a+b));
+  double e2 = 0.006670540000123429;
+  double A1 = a/(1+n)*(n*n*(n*n*((n*n)+4)+64)+256)/256;
+  double h1 = n*(n*(n*(n*(n*(384796*n-382725)-6720)+932400)-1612800)+1209600)/2419200;
+  double h2 = n*n*(n*(n*((1695744-1118711*n)*n-1174656)+258048)+80640)/3870720;
+  double h3 = n*n*n*(n*(n*(22276*n-16929)-15984)+12852)/362880;
+  double h4 = n*n*n*n*((-830251*n-158400)*n+197865)/7257600;
+  double h5 = (453717-435388*n)*n*n*n*n*n/15966720;
+  double h6 = 20648693*n*n*n*n*n*n/638668800;
+  double M = calc_M(0.9337511498169663,0.9337511498169663,n,b,1.000035);
+  double E = (no-250000+M)/(A1*1.000035);
+  double nn = (ea-200000)/(A1*1.000035);
+  double E1i = h1*sin(2*E)*cosh(2*nn);
+  double E2i = h2*sin(4*E)*cosh(4*nn);
+  double E3i = h3*sin(6*E)*cosh(6*nn);
+  double E4i = h4*sin(8*E)*cosh(8*nn);
+  double E5i = h5*sin(10*E)*cosh(10*nn);
+  double E6i = h6*sin(12*E)*cosh(12*nn);
+  double n1i = h1*cos(2*E)*sinh(2*nn);
+  double n2i = h2*cos(4*E)*sinh(4*nn);
+  double n3i = h3*cos(6*E)*sinh(6*nn);
+  double n4i = h4*cos(8*E)*sinh(8*nn);
+  double n5i = h5*cos(10*E)*sinh(10*nn);
+  double n6i = h6*cos(12*E)*sinh(12*nn);
+  double Ei = E-(E1i+E2i+E3i+E4i+E5i+E6i);
+  double ni = nn-(n1i+n2i+n3i+n4i+n5i+n6i);
+  double B = asin((1/cosh(ni))*sin(Ei));
+  double l = asin(tanh(ni)/cos(B));
+  double Q = asinh(tan(B));
+  double Qi = Q+(sqrt(e2)*atanh(sqrt(e2)*tanh(Q)));
+  for(;;) {
+    double newv = Q+(sqrt(e2)*atanh(sqrt(e2)*tanh(Qi)));
+    if (abs(Qi-newv) < 1e-11) {
+      break;
+    }
+    Qi = newv; 
+  }
+  double lati = (atan(sinh(Qi)));
+  double loni = (-0.13962634015954636+l );
 
-	ConvertGbos1936LatLngToWgs84( nioslat, nioslon, he, latOut, lonOut, heOut );
+  double r_latOut = 0;
+  double r_lonOut = 0;
+
+  ConvertOsi65ToWgs84( lati, loni, r_latOut, r_lonOut );
+
+  latOut = r_latOut * ( 180 / Pi );
+  lonOut = r_lonOut * ( 180 / Pi );
+
+  heOut = 0;
 }
 
 void ConvertGbos1936LatLngToWgs84(double gbos36lat, double gbos36lon, double he,
@@ -856,14 +904,49 @@ void ConvertWgs84ToGbos1936(double lat, double lon, double he,
 void ConvertWgs84ToOsi(double lat, double lon, double he,
 	double &eaOut, double &noOut, double &heOut)
 {
-	double gbos36lat2 = 0.0;
-	double gbos36lon2 = 0.0;
-	ConvertWgs84ToGbos1936LatLng(lat, lon, he, gbos36lat2, gbos36lon2 );
-	eaOut = Lat_Long_to_East(gbos36lat2, gbos36lon2, 6377340.18945, 6356034.44838, 200000,0.999601272, 53.50000,-8.00000);
-	noOut = Lat_Long_to_North(gbos36lat2, gbos36lon2, 6377340.18945, 6356034.44838, 200000, 250000,0.999601272, 53.50000,-8.00000);
-	heOut = 0;
+  const double Pi = 3.14159265358979;
+  double r_lat = 0;
+  double r_lon = 0;
+  ConvertWgs84ToOsi65( lat * ( Pi / 180 ), lon * ( Pi / 180 ), r_lat, r_lon );
+  double a = 6377340.189446778;
+  double b = 6356034.448383377;
+  double n = ((a-b)/(a+b));
+  double e2 = 0.006670540000123429;
+  double ei2 = e2/(1-e2);
+  double A1 = a/(1+n)*(n*n*(n*n*((n*n)+4)+64)+256)/256;
+  double h1i = n*(n*(n*(n*(n*(31564*n-66675)+34440)+47250)-100800)+75600)/151200;
+  double h2i = n*n*(n*(n*((863232-1983433*n)*n+748608)-1161216)+524160)/1935360;
+  double h3i = n*n*n*(n*(n*(670412*n+406647)-533952)+184464)/725760;
+  double h4i = n*n*n*n*(n*(6601661*n-7732800)+2230245)/7257600;
+  double h5i = (3438171-13675556*n)*n*n*n*n*n/7983360;
+  double h6i = 212378941*n*n*n*n*n*n/319334400;
+  double Qi = asinh(tan(r_lat));
+  double Qii = atanh(sqrt(e2)*sin(r_lat));
+  double Q = Qi-(sqrt(e2)*Qii);
+  double l = r_lon - (-0.13962634015954636);
+  double BB = atan(sinh(Q));
+  double ni = atanh(cos(BB)*sin(l));
+  double Ei = asin(sin(BB)/(1/cosh(ni)));
+  double E1 = h1i*sin(2*Ei)*cosh(2*ni);
+  double E2 = h2i*sin(4*Ei)*cosh(4*ni);
+  double E3 = h3i*sin(6*Ei)*cosh(6*ni);
+  double E4 = h4i*sin(8*Ei)*cosh(8*ni);
+  double E5 = h5i*sin(10*Ei)*cosh(10*ni);
+  double E6 = h6i*sin(12*Ei)*cosh(12*ni);
+  double n1 = h1i*cos(2*Ei)*sinh(2*ni);
+  double n2 = h2i*cos(4*Ei)*sinh(4*ni);
+  double n3 = h3i*cos(6*Ei)*sinh(6*ni);
+  double n4 = h4i*cos(8*Ei)*sinh(8*ni);
+  double n5 = h5i*cos(10*Ei)*sinh(10*ni);
+  double n6 = h6i*cos(12*Ei)*sinh(12*ni);
+  double E = Ei+E1+E2+E3+E4+E5+E6;
+  double nn = ni+n1+n2+n3+n4+n5+n6;
+  double M = calc_M(0.9337511498169663,0.9337511498169663,n,b,1.000035);
+  noOut = (A1*E*1.000035+250000-M);
+  eaOut = (A1*nn*1.000035)+200000;
+  heOut = 0;
 
-	//cout << eaOut << "," << noOut << endl;
+  //cout << eaOut << "," << noOut << endl;
 }
 
 void ConvertWgs84ToCas(double wlat, double wlon, double he,
@@ -896,8 +979,8 @@ void ConvertWgs84ToCas(double wlat, double wlon, double he,
         long double GG = (AA - (T * pow(AA, 3) / 6) - ((8 - T + (8 * C)) * T * pow(AA, 5) / 120));
         long double N = ((a - b) / (a + b));
 
-        long double M0 = calc_M(Lat0, Lat0, N, b);
-        long double M = calc_M(lat, lat, N, b);
+        long double M0 = calc_M(Lat0, Lat0, N, b, 1);
+        long double M = calc_M(lat, lat, N, b, 1);
         long double FF = ((pow(AA, 2) / 2) + ((5 - T + (6 * C)) * pow(AA, 4) / 24));
 
         eaOut = FE + (v * GG);
@@ -941,7 +1024,7 @@ void ConvertWgs84ToBn(const double orglat, const double orglon,
         noOut = X;
 }
 
-double calc_M(double latdiff, double latsum, double nn, double eb)
+double calc_M(double latdiff, double latsum, double nn, double eb, double F0)
 {
 	double n2 = pow(nn,2);
 	double n3 = pow(nn,3);
@@ -950,7 +1033,7 @@ double calc_M(double latdiff, double latsum, double nn, double eb)
     	double DD = (((15/8)*n2)+((15/8)*n3))*sin(2*latdiff)*cos(2*latsum);
 	double EE = ((35/24)*n3)*sin(3*latdiff)*cos(3*latsum);
 
-	return (eb*(BB-CC+DD-EE));
+	return (eb*F0*(BB-CC+DD-EE));
 }
 
 void ConvertWgs84ToGbos1936LatLng(double lat, double lon, double he,
@@ -1033,6 +1116,78 @@ int TestGbos1936()
 
 	return 1;
 }
+
+void ConvertOsi65ToWgs84(double osilat, double osilon, double &latOut,
+ double &lonOut )
+{
+  double latShift = 0;
+  double lonShift = 0;
+  GetOsiShift( osilat, osilon, latShift, lonShift );
+  latOut = osilat + latShift;
+  lonOut = osilon + lonShift;
+}
+
+void ConvertWgs84ToOsi65(double lat, double lon, double &latOut, double &lonOut )
+{
+   double old_lat = 0;
+   double old_lon = 0;
+   double shift_lat = 0;
+   double shift_lon = 0;
+   GetOsiShift( lat, lon, shift_lat, shift_lon );
+   latOut = lat-shift_lat;
+   lonOut = lon-shift_lon;
+   for( ;; ) {
+      old_lat = shift_lat;
+      old_lon = shift_lon;
+      GetOsiShift( lat, lon, shift_lat, shift_lon );
+      if (abs(shift_lon-old_lon<1e-10) &&
+        abs(shift_lat-old_lat<1e-10)) {
+        break;
+      } else {
+         latOut=lat-shift_lat;
+         lonOut=lat-shift_lon;
+      }
+   } 
+}
+
+void GetOsiShift(double lat, double lon, double &latOut, double &lonOut ) 
+{
+  const double Pi = 3.14159265358979;
+  const double osiA[4][4] =
+  {
+    { 0.763, 0.123, 0.183, -0.374 },
+    { -4.487, -0.515, 0.414, 13.11 },
+    { 0.215, -0.57, 5.703, 113.743 },
+    { -0.265, 2.852, -61.678, -265.898 }
+  };
+
+  const double osiB[4][4] =
+  {
+    { -2.81, -4.68, 0.17, 2.163 },
+    { -0.341, -0.119, 3.913, 18.867 },
+    { 1.196, 4.877, -27.795, -284.294 },
+    { -0.887, -46.666, -95.377, -853.95 }
+  };
+
+  const double osik0 = 0.1;
+  const double osilatm = 53.5;
+  const double osilonm = -7.7;
+  double n_U=osik0*((lat * ( 180 / Pi ))-osilatm);
+  double n_V=osik0*((lon * ( 180 / Pi ))-osilonm);
+  double dlat=0;
+  double dlon=0;
+  double coeff=1;
+  for(int xx=0;xx<=3;xx++) {
+    for(int yy=0;yy<=3;yy++) {
+      coeff=pow(n_U,xx)*pow(n_V,yy);
+      dlat+=(osiA[xx][yy]*coeff);
+      dlon+=(osiB[xx][yy]*coeff);
+    }
+  }
+  latOut = (dlat/3600) * ( Pi / 180 );
+  lonOut = (dlon/3600) * ( Pi / 180 );
+}
+
 
 //***************************************************
 
