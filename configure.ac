@@ -1,4 +1,4 @@
-AC_INIT([warp], [1.01], [ritchieswann@gmail.com])
+AC_INIT([warp], [1.02], [ritchieswann@gmail.com])
 AM_INIT_AUTOMAKE(subdir-objects)
 AM_SILENT_RULES([yes])
 AC_CONFIG_MACRO_DIRS([m4])
