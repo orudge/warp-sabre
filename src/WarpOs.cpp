@@ -221,7 +221,20 @@ int main(int argc, char *argv[])
 	po::options_description desc("Allowed options");
 	try
 	{
-		desc.add_options()("in,i", po::value<string>(), "input image filename")("points,p", po::value<string>(), "points to define transformation")("out,o", po::value<string>(), "output name (extension is added automatically)")("vis,v", "visualisation of error")("fitonly", "calc transform only (no rectify)")("aspect", "ensure output aspect ratio matches coordinate distances")("inproj", po::value<string>(), "input projection (mercator, gbos)")("outproj", po::value<string>(), "output projection (mercator, gbos)")("fit,f", po::value<int>(), "order of polynomial")("width,w", po::value<int>(), "output width")("height,h", po::value<int>(), "output height")("corner", po::value<vector<string>>(), "override map corners of final map")("help", "help message");
+		desc.add_options()
+			("in,i", po::value<string>(),"input image filename")
+			("points,p", po::value<string>(), "points to define transformation")
+			("out,o", po::value<string>(), "output name (extension is added automatically)")
+			("vis,v", "visualisation of error")
+			("fitonly", "calc transform only (no rectify)")
+			("aspect", "ensure output aspect ratio matches coordinate distances")
+			("inproj", po::value<string>(), "input projection (mercator, gbos)")
+			("outproj", po::value<string>(), "output projection (mercator, gbos)")
+			("fit,f", po::value<int>(), "order of polynomial")
+			("width,w", po::value<int>(), "output width")
+			("height,h", po::value<int>(), "output height")
+			("corner", po::value<vector<string> >(), "override map corners of final map")
+			("help", "help message");
 
 		//("annot-offset",po::value<double>(),"time offset of anvil annotation track")
 		po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -251,7 +264,7 @@ int main(int argc, char *argv[])
 		if (vm.count("fitonly"))
 			fitOnly = 1;
 		if (vm.count("corner"))
-			corners = vm["corner"].as<vector<string>>();
+			corners = vm["corner"].as<vector<string> >();
 		if (vm.count("outproj"))
 		{
 			outproj = vm["outproj"].as<string>();
