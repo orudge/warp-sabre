@@ -466,7 +466,7 @@ int main(int argc, char *argv[])
 			{
 				dEasting = line[1].GetVald();
 				dNorthing = line[2].GetVald();
-				gFallbackConverter.ConvertBnSToWgs84(dEasting, dNorthing, 0.0, lat, lon, alt);
+				gFallbackConverter.ConvertBnIToWgs84(dEasting, dNorthing, 0.0, lat, lon, alt);
 			}
 			if (lat != -1.0 && lon != -1.0)
 			{
