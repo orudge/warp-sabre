@@ -997,8 +997,8 @@ void ConvertWgs84ToBn(const double orglat, const double orglon,
         const double b = (6356256.909589071 / unit );
         const int FE = 0;
         const int FN = 0;
-        const double Lat0 = 57.5 * (Pi / 180.0);
-	const double Lon0 = -4 * (Pi / 180.0);
+        const double Lat0 = orglat * (Pi / 180.0);
+	    const double Lon0 = orglon * (Pi / 180.0);
     	const double e2 = ((a * a) - (b * b)) / (a * a);
 
         double gbos36lat2 = 0.0;
