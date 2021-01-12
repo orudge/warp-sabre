@@ -8,11 +8,15 @@ protected:
 	double gnorth, gsouth, geast, gwest;
 	int boxset;
 	void ThrowError( const char* what, const char* ref );
-        CopyPixels();
+    CopyPixels();
+
 public:
 	static CopyPixels* Create( const char* type );
-        virtual void UpdateBoundingBox(const char* mapref) = 0;
-        virtual int CheckIfInBox(double lat, double lon) = 0;
+    
+	virtual ~CopyPixels();
+	
+	virtual void UpdateBoundingBox(const char* mapref) = 0;
+    virtual int CheckIfInBox(double lat, double lon) = 0;
 	void Copy(class ImgMagick &imageIn, class ImgMagick &imageOut, class Tile &tile, const bool merge );
 	// Like 'Copy' but only checks the outer 'n' pixels of an image.
 	void FastCopy(class ImgMagick &imageIn, class ImgMagick &imageOut, class Tile &tile, const int tileSize );

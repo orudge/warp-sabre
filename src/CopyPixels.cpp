@@ -50,7 +50,11 @@ CopyPixels::CopyPixels()
 	gsouth = 0;
 	geast = 0;
 	gwest = 0;
-        boxset = 0;
+    boxset = 0;
+}
+
+CopyPixels::~CopyPixels()
+{
 }
 
 void CopyPixels::ThrowError( const char* what, const char* ref )
@@ -238,7 +242,7 @@ bool CopyPixels::CopyTile(class ImgMagick &imageIn, class ImgMagick &imageOut, c
 	double val = imageIn.GetPix(i,j,k);
 	int inMask = this->CheckIfInBox(lat, lon);
 	if(inMask) {
-                if( !merge || ( val > 0 ) ) {
+        if( !merge || ( val > 0 ) ) {
 		  imageOut.SetPix(i,j,k,val);
 		  return true;
 		}
