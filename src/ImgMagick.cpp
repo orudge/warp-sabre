@@ -1,12 +1,15 @@
 
 #include "ImgMagick.h"
-#include <wand/magick-wand.h>
+#include <Magick++/Functions.h>
+#include <Magick++/Image.h>
 #include <string.h>
 #include <iostream>
 using namespace std;
+using namespace Magick;
 
 ImgMagick::ImgMagick()
 {
+	InitializeMagick( NULL );
 	raw = 0;
 	height = 0;
 	width = 0;
@@ -46,30 +49,18 @@ void ImgMagick::Close()
 
 int ImgMagick::Open(const char *filename)
 {
+	
 	Close();
 
-	MagickWand *wand = NewMagickWand();
-	//Open File	
-	//FILE *imgFile = fopen(filename,"r");
-	//if(!imgFile) {
-	//	perror( "Cannot open file" );
-	//	return -1;
-	//}
-	//MagickBooleanType ret = MagickReadImageFile(wand,imgFile);
-	bool ret = MagickReadImage(wand, filename );
-	//fclose(imgFile);
-	if(!ret) {
-		perror( "Not an image file" );
-		return -1;
-	}
-
-	width = MagickGetImageWidth(wand);
-	height = MagickGetImageHeight(wand);
+	Image image;
+	image.read( filename );
+    
+	width = image.columns();
+	height = image.rows();
 	channels = 3;
 
-	raw = new unsigned char[width*height*channels];
-	MagickGetImagePixels(wand,0,0,width,height,"RGB",CharPixel,raw);
-	DestroyMagickWand(wand);
+    raw = new unsigned char[width*height*channels];
+    image.write( 0, 0, width, height, "RGB", CharPixel, raw );
 	return 1;
 }
 
@@ -77,14 +68,9 @@ int ImgMagick::Save(const char *filename)
 {
 	if(!raw) return -1;
 
-	MagickWand *wand = NewMagickWand();
-        MagickConstituteImage(wand,
-		width,height,"RGB",
-		CharPixel,raw);
-	//Save and clean up
-	int result = MagickWriteImage(wand, filename);
-	DestroyMagickWand(wand);
-        return 1;
+	Image image( width, height, "RGB", CharPixel, raw );
+    image.write( filename );
+	return 1;
 }
 
 void ImgMagick::Clear()

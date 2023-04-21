@@ -1,11 +1,11 @@
-AC_INIT([warp], [1.02], [ritchieswann@gmail.com])
+AC_INIT([warp],[1.02],[ritchieswann@gmail.com])
 AM_INIT_AUTOMAKE(subdir-objects)
 AM_SILENT_RULES([yes])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_PROG_CXX
 PKG_CHECK_MODULES(MAGICKWAND,ImageMagick++,[],[AC_MSG_ERROR([Unable to find ImageMagick++])])
 PKG_CHECK_MODULES(LIBXML,libxml-2.0,[],[AC_MSG_ERROR([Unable to find libxml])])
-AC_PROG_LIBTOOL
+LT_INIT
 BOOST_REQUIRE
 BOOST_FILESYSTEM
 BOOST_PROGRAM_OPTIONS
