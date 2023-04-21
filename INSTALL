@@ -6,6 +6,7 @@ The following libraries are required:
 * Xmorph - does the job of physically moving pixels in an image when
            rectifying it
 
+==Linux==
 For Debian Linux, you should be able to run :
 sudo apt-get install libboost-dev libmorph-dev libmagickwand-dev g++ libxml-dev libnewmat10-dev
 
@@ -14,3 +15,20 @@ To build, type:
 ./configure
 make
 sudo make install
+
+==macOS==
+For macOS using homebrew, a little more work is required
+brew install llvm imagemagick boost xquartz
+	llvm is required because the stock macOS clang does not support
+	-fopenmp which is required by the ImageMagick C++ API
+Newmat and Xmorph must be installed manually into the homebrew directories
+eg: /usr/local/lib for X86_64, /opt/homebrew/lib for arm64
+
+Before calling configure, set the following environemnt variables to point
+to homebrew. For arm64 macOS, these are:
+CXX=/opt/homebrew/opt/llvm/bin/clang++
+CXXFLAGS=-I/opt/homebrew/include
+LDFLAGS=-L/opt/homebrew/lib -L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/libomp/lib
+BOOST_ROOT=/opt/homebrew/include
+MAGICKWAND_CFLAGS=`Magick++-config --cppflags`
+MAGICKWAND_LIBS=`Magick++-config --libs`
