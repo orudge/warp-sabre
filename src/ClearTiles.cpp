@@ -169,7 +169,7 @@ int main(int argc, char ** argv)
 	outImg.SetHeight(256);
 
 	//int zoom = 14;
-	for(unsigned int zoom=14;zoom>=2;zoom--)
+	for(unsigned int zoom=17;zoom>=2;zoom--)
 	{
 	int srcWtile = long2tile(/*-3.68423*/sourceBBox.lonmin, zoom);
 	int srcEtile = long2tile(sourceBBox.lonmax, zoom);
