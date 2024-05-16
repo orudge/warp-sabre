@@ -1,6 +1,0 @@
-#!/bin/sh -e
-
-aclocal
-libtoolize
-automake --add-missing
-autoconf
