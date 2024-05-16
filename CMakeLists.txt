@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(ImageMagick REQUIRED COMPONENTS Magick++)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 add_compile_options(${ImageMagick_COMPILE_OPTIONS})
+add_compile_options(-DUSE_MT_GENTILES)
 
 find_package(Boost REQUIRED COMPONENTS program_options filesystem system thread)
 

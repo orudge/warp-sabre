@@ -829,7 +829,7 @@ int main(int argc, char ** argv)
 		statusLock.lock();
 		int localThreadRunning = gThreadsRunning;
 		statusLock.unlock();
-		//cout << "threadsRunning: " << localThreadRunning << endl;
+		cout << "threadsRunning: " << localThreadRunning << endl;
 
 		//Wait if we have enough running threads
 		while (localThreadRunning >= targetNumThreads)

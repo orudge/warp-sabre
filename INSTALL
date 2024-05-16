@@ -27,8 +27,8 @@ To build, type:
 mkdir build
 cd build
 
-(for x64) cmake -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/usr/local/include -DCMAKE_CXX_STANDARD_LIBRARIES=-L/usr/local/lib
-(for arm64) cmake -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/opt/homebrew/include -DCMAKE_CXX_STANDARD_LIBRARIES=-L/opt/homebrew/lib
+(for x64) cmake -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/usr/local/include -DCMAKE_CXX_STANDARD_LIBRARIES=-L/usr/local/lib ..
+(for arm64) cmake -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/opt/homebrew/include -DCMAKE_CXX_STANDARD_LIBRARIES=-L/opt/homebrew/lib ..
 
 make
 sudo make install
