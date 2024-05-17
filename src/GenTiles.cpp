@@ -11,6 +11,7 @@
 #include "GetBounds.h"
 #include "CopyPixels.h"
 #include "SourceKml.h"
+#include <sys/stat.h>
 #include <boost/program_options.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/thread_time.hpp>
@@ -23,9 +24,6 @@ namespace po = boost::program_options;
 //#include <Magick++.h>
 //rsync --size-only -v -r /var/www/os7 timsc@dev.openstreetmap.org:/home/ooc
 //rsync --size-only -v -r /var/www/openlayers/os7 timsc@dev.openstreetmap.org:/home/timsc/public_html/openlayers
-
-#include <boost/filesystem.hpp>   // includes all needed Boost.Filesystem declarations
-namespace fs = boost::filesystem;
 
 #include <list>
 #include <iostream>
@@ -419,14 +417,14 @@ int TileJob::Render()
 
 	//outImg = tile;
 
-		if ( !fs::exists( this->outFolder0 ) )
-			fs::create_directory( this->outFolder0 );
+		if ( !dirExists( this->outFolder0.c_str() ) )
+			mkdir( this->outFolder0.c_str(), S_IRWXU );
 
-		if ( !fs::exists( this->outFolder1 ) )
-			fs::create_directory( this->outFolder1 );
+		if ( !dirExists( this->outFolder1.c_str() ) )
+			mkdir( this->outFolder1.c_str(), S_IRWXU );
 
-		if ( !fs::exists( this->outFolder2 ) )
-			fs::create_directory( this->outFolder2 );
+		if ( !dirExists( this->outFolder2.c_str() ) )
+			mkdir( this->outFolder2.c_str(), S_IRWXU );
 
 	   	outImg.Save(this->outFilename.c_str());
 		//temp.syncPixels();
@@ -446,6 +444,8 @@ int main(int argc, char ** argv)
 
 	__g_argv = argv;
 	
+	ImgMagick::Init();
+
 	//Image imageInOut("step.jpg");
 	//imageInOut.crop( Geometry(255,255,0,0) );
 	//imageInOut.write("test2.png");
@@ -543,7 +543,7 @@ int main(int argc, char ** argv)
 	{
 		class SourceKml temp;
 		cout << "Source file '" << inputFiles[i] << "'" << endl;
-		string filePath = GetFilePath(inputFiles[i]);
+		string filePath = GetFilePath(inputFiles[i].c_str());
 
 		src.push_back(temp);
 		class SourceKml &last = src[src.size()-1];
@@ -610,8 +610,7 @@ int main(int argc, char ** argv)
 	for(unsigned int t=0;t<src.size();t++)
 	{
 		class SourceKml &srcKml = src[t];
-		boost::filesystem::path p(srcKml.kmlFilename.c_str()); 
-		string chkStr = p.filename().string();
+		string chkStr = GetFilePath(srcKml.kmlFilename.c_str());
 
 		map<string,int>::iterator it = zoomLimitMax.find(chkStr);
 		if(it!=zoomLimitMax.end())
@@ -651,7 +650,7 @@ int main(int argc, char ** argv)
 		outFilename += ".jpg";
 
 		int skipExistingTiles = 1;
-		if ( fs::exists( outFilename ) && skipExistingTiles)
+		if ( fileExists( outFilename.c_str() ) && skipExistingTiles)
 		{
 			cout << "Already exists: " << outFilename << endl;
 			continue;
@@ -829,7 +828,7 @@ int main(int argc, char ** argv)
 		statusLock.lock();
 		int localThreadRunning = gThreadsRunning;
 		statusLock.unlock();
-		//cout << "threadsRunning: " << localThreadRunning << endl;
+		cout << "threadsRunning: " << localThreadRunning << endl;
 
 		//Wait if we have enough running threads
 		while (localThreadRunning >= targetNumThreads)
@@ -881,5 +880,7 @@ int main(int argc, char ** argv)
 		if(job.originalObj->failed) countFail ++;
 	}
 	cout << "Number of tiles failed: " << countFail << endl;
+
+	ImgMagick::Term();
 }
 

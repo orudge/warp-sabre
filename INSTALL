@@ -11,24 +11,41 @@ For Debian Linux, you should be able to run :
 sudo apt-get install libboost-dev libmorph-dev libmagickwand-dev g++ libxml-dev libnewmat10-dev
 
 To build, type:
-./bootstrap
-./configure
+mkdir build
+cd build
+cmake ..
 make
 sudo make install
 
 ==macOS==
-For macOS using homebrew, a little more work is required
-brew install llvm imagemagick boost xquartz
-	llvm is required because the stock macOS clang does not support
-	-fopenmp which is required by the ImageMagick C++ API
+For macOS using homebrew:
+brew install magick++ boost xquartz
 Newmat and Xmorph must be installed manually into the homebrew directories
 eg: /usr/local/lib for X86_64, /opt/homebrew/lib for arm64
 
-Before calling configure, set the following environemnt variables to point
-to homebrew. For arm64 macOS, these are:
-CXX=/opt/homebrew/opt/llvm/bin/clang++
-CXXFLAGS=-I/opt/homebrew/include
-LDFLAGS=-L/opt/homebrew/lib -L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/libomp/lib
-BOOST_ROOT=/opt/homebrew/include
-MAGICKWAND_CFLAGS=`Magick++-config --cppflags`
-MAGICKWAND_LIBS=`Magick++-config --libs`
+To build, type:
+mkdir build
+cd build
+
+(for x64) cmake -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/usr/local/include -DCMAKE_CXX_STANDARD_LIBRARIES=-L/usr/local/lib ..
+(for arm64) cmake -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/opt/homebrew/include -DCMAKE_CXX_STANDARD_LIBRARIES=-L/opt/homebrew/lib ..
+
+make
+sudo make install
+
+==Windows==
+For Windows using mingw64
+pacman -S imagemagick boost
+Newmat and Xormph must be compiled and installed manually
+
+Mingw64 doesn't play well with unix style file paths :-(
+
+To build, type:
+mkdir build
+cd build
+
+cmake \
+    -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/mingw64/include \
+    -DCMAKE_CXX_STANDARD_LIBRARIES=-L/mingw64/lib \
+    -DImageMagick_INCLUDE_DIRS=/mingw64/include/ImageMagick-7 \
+    -DLIBXML2_INCLUDE_DIR=/mingw64/include/libxml2 ..

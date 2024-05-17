@@ -194,6 +194,8 @@ int main(int argc, char *argv[])
 	string inproj = "gbos";
 	vector<string> corners;
 
+	ImgMagick::Init();
+
 	//Print name of transform to screen
 	char transformName[100];
 	gConverter.GetTransformName(transformName, 100);
@@ -627,7 +629,7 @@ int main(int argc, char *argv[])
 	endImage.Save(mapOutFilename.c_str());
 
 	string mapOutFileNoPath; //Don't save the path into the kml output
-	mapOutFileNoPath = RemoveFilePath(mapOutFilename);
+	mapOutFileNoPath = RemoveFilePath(mapOutFilename.c_str());
 
 	if (mercatorOut)
 	{
@@ -641,4 +643,6 @@ int main(int argc, char *argv[])
 		cout << "Writing KML to " << kmlOutFilename << endl;
 		writeKml.WriteToFile(kmlOutFilename.c_str());
 	}
+
+	ImgMagick::Term();
 }

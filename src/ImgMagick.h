@@ -35,6 +35,9 @@ public:
 	virtual int GetInternalImageType() const;
 	virtual const void *GetInternalDataConst() const;
 
+	static void Init();
+	static void Term();
+
 protected:
 	unsigned char *raw;
 	int height;

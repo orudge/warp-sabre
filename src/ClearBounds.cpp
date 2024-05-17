@@ -19,7 +19,7 @@ void ClearImage( const string& srcFilename, DelimitedFile& boundsFile, const int
 	cout << "Source file '" << srcFilename << "'" << endl;
 	string imgFilename;
 	int ret = ReadKmlFile( srcFilename.c_str(), srcKml.tile, imgFilename );
-	srcKml.imgFilename = GetFilePath( srcFilename );
+	srcKml.imgFilename = GetFilePath( srcFilename.c_str() );
 	srcKml.imgFilename += "/";
 	srcKml.imgFilename += imgFilename;
 	if( ret < 1 ) {
@@ -62,6 +62,8 @@ void ClearImage( const string& srcFilename, DelimitedFile& boundsFile, const int
 
 int main( int argc, char* argv[])
 {
+	ImgMagick::Init();
+
 	vector<SourceKml> src;
 	DelimitedFile boundsFile;
 
@@ -117,5 +119,6 @@ int main( int argc, char* argv[])
 			ClearImage( *it, boundsFile, edge );
 		}
 	}
+	ImgMagick::Term();
 	return 1;
 }
