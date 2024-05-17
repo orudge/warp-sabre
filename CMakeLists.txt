@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.15)
 project(warp-sabre LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(ImageMagick REQUIRED COMPONENTS Magick++)
 include_directories(${ImageMagick_INCLUDE_DIRS})
-execute_process(COMMAND Magick++-config --libs OUTPUT_VARIABLE ImageMagick_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND Magickwand-config --libs OUTPUT_VARIABLE ImageMagick_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
 add_compile_options(${ImageMagick_COMPILE_OPTIONS})
 add_compile_options(-DUSE_MT_GENTILES)
 
