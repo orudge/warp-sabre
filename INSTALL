@@ -32,3 +32,20 @@ cd build
 
 make
 sudo make install
+
+==Windows==
+For Windows using mingw64
+pacman -S imagemagick boost
+Newmat and Xormph must be compiled and installed manually
+
+Mingw64 doesn't play well with unix style file paths :-(
+
+To build, type:
+mkdir build
+cd build
+
+cmake \
+    -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/mingw64/include \
+    -DCMAKE_CXX_STANDARD_LIBRARIES=-L/mingw64/lib \
+    -DImageMagick_INCLUDE_DIRS=/mingw64/include/ImageMagick-7 \
+    -DLIBXML2_INCLUDE_DIR=/mingw64/include/libxml2 ..

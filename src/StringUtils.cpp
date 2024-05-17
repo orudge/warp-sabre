@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "StringUtils.h"
-#include <boost/filesystem.hpp>
+#include <sys/stat.h>
 
 string PackBeforeString(string baseString, string pack, int minLength)
 {
@@ -204,16 +204,20 @@ string RemoveFileExtension(string filename)
 	return filename.substr(0, extensionOffset);
 }
 
-string RemoveFilePath(string filename)
+string RemoveFilePath(const char* filename)
 {
-	boost::filesystem::path p( filename );
-        return p.filename().string();
+	std::string s( filename );
+	std::string result = s.substr( s.find_last_of("/\\") + 1);
+	//std::cout << filename << " RemoveFilePath " << result << endl;
+	return result;
 }
 
-string GetFilePath(string filename)
+string GetFilePath(const char* filename)
 {
-	boost::filesystem::path p( filename );        
-        return p.parent_path().string();
+	std::string s( filename );
+	std::string result = s.substr(0, s.find_last_of("/\\"));
+	//std::cout << filename << " GetFilePath " << result << endl;
+	return result;
 }
 
 string FilenameChangeNumber(string filename, int num)
@@ -364,3 +368,18 @@ string UnescapeCommas(string input)
 	return ReplaceAllInstances(input,"\\,",",");
 }
 
+int dirExists( const char* path )
+{
+	struct stat info;
+	return( stat( path, &info ) == 0 );
+}
+
+int fileExists( const char* path )
+{
+	if (FILE *file = fopen(path, "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }   
+}

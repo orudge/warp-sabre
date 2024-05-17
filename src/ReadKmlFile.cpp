@@ -157,7 +157,7 @@ int ReadKmlFile(const char *filename, class Tile &tileOut, string &imgFilenameOu
 		vector<string> empty;
 		processKml.ProcessNode(pNode, empty);
 
-		imgFilenameOut = RemoveFilePath( processKml.imgFilename );
+		imgFilenameOut = RemoveFilePath( processKml.imgFilename.c_str() );
 		tileOut = processKml.tile;
 
                 xmlFreeDoc( doc );

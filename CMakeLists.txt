@@ -6,10 +6,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(ImageMagick REQUIRED COMPONENTS Magick++)
 include_directories(${ImageMagick_INCLUDE_DIRS})
+execute_process(COMMAND Magick++-config --libs OUTPUT_VARIABLE ImageMagick_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
 add_compile_options(${ImageMagick_COMPILE_OPTIONS})
 add_compile_options(-DUSE_MT_GENTILES)
 
-find_package(Boost REQUIRED COMPONENTS program_options filesystem system thread)
+find_package(Boost REQUIRED COMPONENTS program_options system thread)
+find_package(LibXml2 REQUIRED)
+
+include_directories(${LIBXML2_INCLUDE_DIR})
 
 add_executable(warp-sabre
     src/ImageWarpByFunc.cpp
@@ -63,10 +67,9 @@ add_executable(clearbounds
 )
 
 target_link_libraries(warp-sabre
-    PRIVATE ${ImageMagick_LIBRARIES}
+    PRIVATE  ${ImageMagick_LIBRARIES}
     PRIVATE -lboost_program_options-mt
     PRIVATE -lboost_system-mt
-    PRIVATE -lboost_filesystem-mt
     PRIVATE -lmorph
     PRIVATE -lnewmat
 )
@@ -76,7 +79,6 @@ target_link_libraries(gentiles
     PRIVATE xml2
     PRIVATE -lboost_program_options-mt
     PRIVATE -lboost_thread-mt
-    PRIVATE -lboost_filesystem-mt
     PRIVATE -lboost_system-mt
     PRIVATE -lmorph
 )
@@ -86,7 +88,6 @@ target_link_libraries(cleartiles
     PRIVATE xml2
     PRIVATE -lboost_program_options-mt
     PRIVATE -lboost_thread-mt
-    PRIVATE -lboost_filesystem-mt
     PRIVATE -lboost_system-mt
     PRIVATE -lmorph
 )
@@ -96,7 +97,6 @@ target_link_libraries(clearbounds
     PRIVATE xml2
     PRIVATE -lboost_program_options-mt
     PRIVATE -lboost_thread-mt
-    PRIVATE -lboost_filesystem-mt
     PRIVATE -lboost_system-mt
     PRIVATE -lmorph
 )

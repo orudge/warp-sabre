@@ -20,9 +20,6 @@ namespace po = boost::program_options;
 //rsync --size-only -v -r /var/www/os7 timsc@dev.openstreetmap.org:/home/ooc
 //rsync --size-only -v -r /var/www/openlayers/os7 timsc@dev.openstreetmap.org:/home/timsc/public_html/openlayers
 
-#include <boost/filesystem.hpp>   // includes all needed Boost.Filesystem declarations
-namespace fs = boost::filesystem;
-
 #include <list>
 #include <iostream>
 #include <exception>
@@ -58,7 +55,7 @@ void DrawMarker(class ImgMagick &img, double x, double y)
 
 int main(int argc, char ** argv)
 {
-
+	ImgMagick::Init();
 	
 	//Image imageInOut("step.jpg");
 	//imageInOut.crop( Geometry(255,255,0,0) );
@@ -122,7 +119,7 @@ int main(int argc, char ** argv)
 	{
 		class SourceKml temp;
 		cout << "Source file '" << inputFiles[i] << "'" << endl;
-		string filePath = GetFilePath(inputFiles[i]);
+		string filePath = GetFilePath(inputFiles[i].c_str());
 
 		src.push_back(temp);
 		class SourceKml &last = src[src.size()-1];
@@ -203,14 +200,16 @@ int main(int argc, char ** argv)
 	outFilename += IntToString(tileLat);
 	outFilename += ".jpg";
 
-	if ( fs::exists( outFilename ))
+	if ( fileExists( outFilename.c_str() ))
 	{
 		cout << "Deleting: " << outFilename << endl;
-		fs::remove(outFilename);	
+		remove(outFilename.c_str());	
 
 	}
 
 	} //End of tile loop
 	} //End of zoom loop
+
+	ImgMagick::Term();
 }
 
