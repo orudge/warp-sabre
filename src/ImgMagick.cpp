@@ -62,10 +62,7 @@ int ImgMagick::Open(const char *filename)
 
 	MagickWand *wand = NewMagickWand();
 	//Open File	
-	FILE *imgFile = fopen(filename,"r");
-	if(!imgFile) return -1;
-	MagickBooleanType ret = MagickReadImageFile(wand,imgFile);
-	fclose(imgFile);
+	MagickBooleanType ret = MagickReadImage(wand,filename);
 	if(!ret) return -1;
 
 	width = MagickGetImageWidth(wand);
@@ -74,7 +71,7 @@ int ImgMagick::Open(const char *filename)
 
 	raw = new unsigned char[width*height*channels];
 	MagickExportImagePixels(wand,0,0,width,height,"RGB",CharPixel,raw);
-	ClearMagickWand(wand);
+	DestroyMagickWand(wand);
 	return 1;
 }
 
