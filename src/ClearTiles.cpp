@@ -11,8 +11,7 @@
 #include "ReadDelimitedFile.h"
 #include "GetBounds.h"
 #include "SourceKml.h"
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
+#include "ProgramOptions.h"
 
 //#include <wand/magick-wand.h>
 //#include <wand/drawing-wand.h>
@@ -72,39 +71,28 @@ int main(int argc, char ** argv)
 	//cout << long2tile(-3.68, zoom) << "," << lat2tile(54.8333,zoom) << endl;
 	//cout << long2tile(-3.04, zoom) << "," << lat2tile(55.2446,zoom) << endl;
 
-	//Process program options using boost library
-        po::variables_map vm;
-        po::options_description desc("Allowed options");
-        try{
-        	po::positional_options_description pd;
-        	pd.add("positional", -1);
-
-        	desc.add_options() ("bounds", po::value<string>(), "Bounds filename")
-                ("output", po::value<string>(), "Output folder")
-		("positional", po::value<std::vector<std::string> >(), "Input KML files")
-                ("help","help message");
-
-		po::parsed_options parsed = po::command_line_parser(argc, argv).options(desc).allow_unregistered().positional(pd).run();
-       		po::store(parsed, vm);
-        	po::notify(vm);
-	}
-	catch(exception &e)
-        {
-                cerr << "error: " << e.what() << endl;
-        }
+	//Process program options
+    std::stringstream desc;
+	desc << "Allowed options" << endl;
+  	desc << "  --bounds arg          Bounds filename" << endl;
+	desc << "  --output arg          Output folder" << endl;
+  	desc << "  --positional arg   	 Input KML files" << endl;
+  	desc << "  --help                help message" << endl;
+       
+	ProgramOptions po( argc, argv );
 	
 	string boundsFilename = "bounds.csv";
 	string outFolder = "out";
-	if(vm.count("help")) {cout << desc << endl; exit(0);}
-        if(vm.count("output")) outFolder = vm["output"].as<string>();
-        if(vm.count("bounds")) boundsFilename = vm["bounds"].as<string>();
+	if(po.HasArg("help")) {cout << desc.str() << endl; exit(0);}
+    if(po.HasArg("output")) outFolder = po.GetArg("output");
+    if(po.HasArg("bounds")) boundsFilename = po.GetArg("bounds");
 
 	vector<string> inputFiles;
-	if (vm.count("positional"))
+	if (po.HasArg(NULL))
         {
-                inputFiles = vm["positional"].as< vector<string> >();
-                //for(unsigned int i=0;i<inputFiles.size();i++)
-                //      cout << "input file " << inputFiles[i] << endl;
+                inputFiles = po.GetMultiArg(NULL);
+                for(unsigned int i=0;i<inputFiles.size();i++)
+                      cout << "input file " << inputFiles[i] << endl;
         }
 
 	vector<class SourceKml> src;

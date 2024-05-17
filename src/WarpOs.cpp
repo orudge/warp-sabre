@@ -7,6 +7,7 @@ using namespace std;
 #include "ErrorHandling.h"
 #include "ImageWarpByFunc.h"
 #include "ReadDelimitedFile.h"
+#include "ProgramOptions.h"
 #include "ganzc/LatLong-OSGBconversion.h" //Poor accuracy?
 #include "gbos1936/Gbos1936.h"
 #ifdef WITH_OSTN02_PERL
@@ -16,10 +17,8 @@ using namespace std;
 #include "PyOstn02.h"
 #endif //WITH_OSTN02_PYTHON
 #include "Tile.h"
-#include <boost/program_options.hpp>
 #include <math.h>
 #include "StringUtils.h"
-namespace po = boost::program_options;
 
 //class HelmertConverter gConverter;
 #ifdef WITH_OSTN02_PYTHON
@@ -218,103 +217,99 @@ int main(int argc, char *argv[])
 	OSGBtoLL(OSGBNorthing, OSGBEasting, OSGBZone, Lat, Long);
 	cout << "Calculated Lat, Long position(Lat, Long):  " << Lat << "   " << Long << endl <<endl;*/
 
-	//Process program options using boost library
-	po::variables_map vm;
-	po::options_description desc("Allowed options");
-	try
-	{
-		desc.add_options()
-			("in,i", po::value<string>(),"input image filename")
-			("points,p", po::value<string>(), "points to define transformation")
-			("out,o", po::value<string>(), "output name (extension is added automatically)")
-			("vis,v", "visualisation of error")
-			("fitonly", "calc transform only (no rectify)")
-			("aspect", "ensure output aspect ratio matches coordinate distances")
-			("inproj", po::value<string>(), "input projection (mercator, gbos)")
-			("outproj", po::value<string>(), "output projection (mercator, gbos)")
-			("fit,f", po::value<int>(), "order of polynomial")
-			("width,w", po::value<int>(), "output width")
-			("height,h", po::value<int>(), "output height")
-			("corner", po::value<vector<string> >(), "override map corners of final map")
-			("help", "help message");
+	//Process program options
+	std::stringstream desc;
+	desc << "Allowed options:" << endl;
+	desc << "  -i [ --in ] arg       input image filename" << endl;
+	desc << "  -p [ --points ] arg   points to define transformation" << endl;
+	desc << "  -o [ --out ] arg      output name (extension is added automatically)" << endl;
+	desc << "  -v [ --vis ]          visualisation of error" << endl;
+	desc << "  --fitonly             calc transform only (no rectify)" << endl;
+	desc << "  --aspect              ensure output aspect ratio matches coordinate distances" << endl;
+	desc << "  --inproj arg          input projection (mercator, gbos)" << endl;
+	desc << "  --outproj arg         output projection (mercator, gbos)" << endl;
+	desc << "  -f [ --fit ] arg      order of polynomial" << endl;
+	desc << "  -w [ --width ] arg    output width" << endl;
+	desc << "  -h [ --height ] arg   output height" << endl;
+	desc << "  --help                help message" << endl;
 
-		//("annot-offset",po::value<double>(),"time offset of anvil annotation track")
-		po::store(po::parse_command_line(argc, argv, desc), vm);
-		po::notify(vm);
+	ProgramOptions po( argc, argv );
+	po.AddAlias( 'i', "in" );
+	po.AddAlias( 'p', "points" );
+	po.AddAlias( 'o', "out" );
+	po.AddAlias( 'v', "vis" );
+	po.AddAlias( 'f', "fit" );
+	po.AddAlias( 'w', "width" );
+	po.AddAlias( 'h', "height" );
 
-		if (vm.count("help"))
-		{
-			cout << desc << endl;
-			exit(0);
-		}
-		if (vm.count("in"))
-			inputImageFilename = vm["in"].as<string>();
-		if (vm.count("points"))
-			inputPointsFilename = vm["points"].as<string>();
-		if (vm.count("out"))
-			outputFilename = vm["out"].as<string>();
-		if (vm.count("vis"))
-			visualiseErrors = 1;
-		if (vm.count("fit"))
-			polynomialOrder = vm["fit"].as<int>();
-		if (vm.count("width"))
-			outputWidth = vm["width"].as<int>();
-		if (vm.count("height"))
-			outputHeight = vm["height"].as<int>();
-		if (vm.count("aspect"))
-			forceAspectCoord = 1;
-		if (vm.count("fitonly"))
-			fitOnly = 1;
-		if (vm.count("corner"))
-			corners = vm["corner"].as<vector<string> >();
-		if (vm.count("outproj"))
-		{
-			outproj = vm["outproj"].as<string>();
-			if (outproj == "gbos")
-			{
-				gbosOut = 1;
-				mercatorOut = 0;
-			}
-		}
-		if (vm.count("inproj"))
-		{
-			inproj = vm["inproj"].as<string>();
-			if (inproj == "mercator")
-			{
-				projType = PolyProjectArgs::Mercator;
-			}
-			if (inproj == "cassini")
-			{
-				projType = PolyProjectArgs::Cassini;
-			}
-			if (inproj == "bonnes")
-			{
-				projType = PolyProjectArgs::BonneS;
-			}
-			if (inproj == "bonnei")
-			{
-				projType = PolyProjectArgs::BonneI;
-			}
-			if (inproj == "osi")
-			{
-				projType = PolyProjectArgs::OSI;
-			}
-		}
-
-		if (inputImageFilename.length() == 0)
-		{
-			cout << desc << endl;
-			exit(0);
-		}
-
-		//Check basic parameters are set
-		//if(inputFilename.size() == 0)
-		//{cout << "Error: input sequence must be specified" << endl << desc << endl; exit(0);}
+	if( po.HasArg( "help" ) ) {
+		cout << desc.str() << endl;
+		exit(0);
 	}
-	catch (exception &e)
-	{
-		cerr << "error: " << e.what() << endl;
+	if( po.HasArg( "in" ) ) {
+		inputImageFilename = po.GetArg( "in" );
 	}
+	if (po.HasArg("points"))
+		inputPointsFilename = po.GetArg("points");
+	if (po.HasArg("out"))
+		outputFilename = po.GetArg("out");
+	if (po.HasArg("vis"))
+		visualiseErrors = 1;
+	if (po.HasArg("fit"))
+		polynomialOrder = po.GetIntArg("fit");
+	if (po.HasArg("width"))
+		outputWidth = po.GetIntArg("width");
+	if (po.HasArg("height"))
+		outputHeight = po.GetIntArg("height");
+	if (po.HasArg("aspect"))
+		forceAspectCoord = 1;
+	if (po.HasArg("fitonly"))
+		fitOnly = 1;
+	if (po.HasArg("corner"))
+		corners = po.GetMultiArg("corner");
+	if (po.HasArg("outproj"))
+	{
+		outproj = po.GetArg("outproj");
+		if (outproj == "gbos")
+		{
+			gbosOut = 1;
+			mercatorOut = 0;
+		}
+	}
+	if (po.HasArg("inproj"))
+	{
+		inproj = po.GetArg("inproj");
+		if (inproj == "mercator")
+		{
+			projType = PolyProjectArgs::Mercator;
+		}
+		if (inproj == "cassini")
+		{
+			projType = PolyProjectArgs::Cassini;
+		}
+		if (inproj == "bonnes")
+		{
+			projType = PolyProjectArgs::BonneS;
+		}
+		if (inproj == "bonnei")
+		{
+			projType = PolyProjectArgs::BonneI;
+		}
+		if (inproj == "osi")
+		{
+			projType = PolyProjectArgs::OSI;
+		}
+	}
+
+	if (inputImageFilename.length() == 0)
+	{
+		cout << desc.str() << endl;
+		exit(0);
+	}
+
+	//Check basic parameters are set
+	//if(inputFilename.size() == 0)
+	//{cout << "Error: input sequence must be specified" << endl << desc << endl; exit(0);
 
 	class Tile tile;
 	cout << "Loading image..." << endl;
@@ -336,7 +331,7 @@ int main(int argc, char *argv[])
 	if (pointDef.Open(inputPointsFilename.c_str()) < 0)
 	{
 		cout << "File not found" << endl;
-		cout << desc << endl;
+		cout << desc.str() << endl;
 		exit(-1);
 	}
 

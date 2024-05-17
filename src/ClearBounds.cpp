@@ -5,8 +5,7 @@
 #include "ReadDelimitedFile.h"
 #include "GetBounds.h"
 #include "CopyPixels.h"
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
+#include "ProgramOptions.h"
 
 #include <memory>
 
@@ -73,40 +72,33 @@ int main( int argc, char* argv[])
 	string execFilename = "clearbounds";
 	if( argc >= 1 ) execFilename = argv[ 0 ];
 
-	po::variables_map vm;
-	po::options_description desc( "Allowed options" );
-	try {
-		po::positional_options_description pd;
-		pd.add( "positional", -1 );
-		desc.add_options() ( "bounds", po::value<string>(), "Bounds filename" )
-		( "edge", po::value<int>(), "Number of pixels from the edge to check (higher = more accurate but slower)" )
-		( "positional" , po::value<vector<string> >(), "Input KML file" )
-		( "help", "help message" );
-		po::parsed_options parsed = po::command_line_parser(argc, argv ).options( desc ).allow_unregistered().positional( pd ).run();
-		po::store( parsed, vm );
-		po::notify( vm );
+	std::stringstream desc;
+	desc << "Allowed options" << endl;
+  	desc << "  --bounds arg          Bounds filename" << endl;
+	desc << "  --edge arg      		 Number of pixels from the edge to check (higher = more accurate but slower)" << endl;
+  	desc << "  --positional arg  	 Input KML files" << endl;
+  	desc << "  --help                help message" << endl;
 
-		if(vm.count("help")) { 
-			cout << desc << endl;
-			exit( 0 );
-		}
-		if ( vm.count( "bounds" ) ) {
-			boundsFilename = vm["bounds"].as<string>();
-		}
-		if ( vm.count( "edge" ) ) {
-			edge = vm["edge"].as<int>();
-		}
-		if ( vm.count("positional") ) {
-			inputFiles = vm["positional"].as<vector<string> >();
-		}
-	} catch( exception& e ) {
-		cerr << "error: " << e.what() << endl;
+	ProgramOptions po( argc, argv );
+
+	if(po.HasArg("help")) { 
+		cout << desc.str() << endl;
+		exit( 0 );
+	}
+	if ( po.HasArg( "bounds" ) ) {
+		boundsFilename = po.GetArg("bounds");
+	}
+	if ( po.HasArg( "edge" ) ) {
+		edge = po.GetIntArg("edge");
+	}
+	if ( po.HasArg(NULL) ) {
+		inputFiles = po.GetMultiArg(NULL);
 	}
 
 	if( 0 == inputFiles.size() ) {
 		cout << "Input files not specified" << endl;
 		cout << "Usage: " << execFilename << " [options] kml_files" << endl;
-		cout << desc << endl;
+		cout << desc.str() << endl;
 		return 0;
 	}
 

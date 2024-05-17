@@ -11,13 +11,12 @@
 #include "GetBounds.h"
 #include "CopyPixels.h"
 #include "SourceKml.h"
+#include "ProgramOptions.h"
 #include <sys/stat.h>
-#include <boost/program_options.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/thread_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-namespace po = boost::program_options;
 
 //#include <wand/magick-wand.h>
 //#include <wand/drawing-wand.h>
@@ -474,61 +473,49 @@ int main(int argc, char ** argv)
 	string execFilename = "gentiles";
 	if(argc >= 1) execFilename = argv[0];
 
-	//Process program options using boost library
-	po::variables_map vm;
-	po::options_description desc("Allowed options");
-	try{
-	po::positional_options_description pd;
-        pd.add("positional", -1); 
+	//Process program options
 
-	desc.add_options() ("minzoom", po::value<int>(), "Minimum zoom level")
-		("maxzoom", po::value<int>(), "Maximum zoom level")
-		("output", po::value<string>(), "Output folder")
-		("bounds", po::value<string>(), "Bounds filename")
-		("maxloaded", po::value<int>(), "Maximum number of tiles in memory")
-		("threads", po::value<int>(), "Maximum number of threads")
-		("merge", po::value<bool>(), "Merge tiles rather than overwrite")
-		("positional", po::value<std::vector<std::string> >(), "Input KML files")
-		("help","help message");
+	std::stringstream desc;
+	desc << "Allowed options" << endl;
+	desc << "  --minzoom arg         Minimum zoom level" << endl;
+	desc << "  --maxzoom arg         Maximum zoom level" << endl;
+  	desc << "  --output arg          Output folder" << endl;
+  	desc << "  --bounds arg          Bounds filename" << endl;
+  	desc << "  --maxloaded arg       Maximum number of tiles in memory" << endl;
+  	desc << "  --threads arg         Maximum number of threads" << endl;
+  	desc << "  --merge arg           Merge tiles rather than overwrite" << endl;
+  	desc << "  --positional arg 	 Input KML files" << endl;
+  	desc << "  --help                help message" << endl;
+	
+	ProgramOptions po( argc, argv );
 
-		//("annot-offset",po::value<double>(),"time offset of anvil annotation track")
-	 po::parsed_options parsed = po::command_line_parser(argc, argv).options(desc).allow_unregistered().positional(pd).run();
-	po::store(parsed, vm);
-	po::notify(vm);
+	if(po.HasArg("help")) {cout << desc.str() << endl; exit(0);}
+	if(po.HasArg("minzoom")) minZoom = po.GetIntArg("minzoom");
+	if(po.HasArg("maxzoom")) maxZoom = po.GetIntArg("maxzoom");
+	if(po.HasArg("maxloaded")) maxTilesLoaded = po.GetIntArg("maxloaded");
+	if(po.HasArg("threads")) targetNumThreads = po.GetIntArg("threads");
+    if(po.HasArg("merge")) mergeTiles = ( po.GetIntArg("merge") == 1 );
+	if(po.HasArg("output")) outFolder = po.GetArg("output");
+	if(po.HasArg("bounds")) boundsFilename = po.GetArg("bounds");
 
-	if(vm.count("help")) {cout << desc << endl; exit(0);}
-	if(vm.count("minzoom")) minZoom = vm["minzoom"].as<int>();
-	if(vm.count("maxzoom")) maxZoom = vm["maxzoom"].as<int>();
-	if(vm.count("maxloaded")) maxTilesLoaded = vm["maxloaded"].as<int>();
-	if(vm.count("threads")) targetNumThreads = vm["threads"].as<int>();
-        if(vm.count("merge")) mergeTiles = vm["merge"].as<bool>();
-	if(vm.count("output")) outFolder = vm["output"].as<string>();
-	if(vm.count("bounds")) boundsFilename = vm["bounds"].as<string>();
-
-	if (vm.count("positional"))
+	if (po.HasArg( NULL ) )
 	{
-		inputFiles = vm["positional"].as< vector<string> >();
-		//for(unsigned int i=0;i<inputFiles.size();i++)
-		//	cout << "input file " << inputFiles[i] << endl;
-	}
-
-	}
-	catch(exception &e)
-	{
-		cerr << "error: " << e.what() << endl;
+		inputFiles = po.GetMultiArg( NULL );
+		for(unsigned int i=0;i<inputFiles.size();i++)
+			cout << "input file " << inputFiles[i] << endl;
 	}
 
 	if(inputFiles.size()==0)
 	{
 		cout << "No input KML files were specified" << endl;
-		cout << "Usage: " << execFilename << " [options] one.kml [two.kml ...]" << endl;
-		cout << desc << endl; exit(0);
+		cout << "Usage: " << execFilename << " [options]" << endl;
+		cout << desc.str() << endl; exit(0);
 	}
 
 	if(minZoom > maxZoom)
 	{
 		cout << "Error max zoom is lower than min zoom" << endl;
-		cout << desc << endl; exit(0);
+		cout << desc.str() << endl; exit(0);
 	}
 
 	int boundsOpen = boundsFile.Open(boundsFilename.c_str());
