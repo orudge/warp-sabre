@@ -1,0 +1,9 @@
+--- libmorph/Makefile.in	2006-08-19 16:39:08.000000000 +0100
++++ libmorph/Makefile.in.new	2024-05-21 13:57:56.889645100 +0100
+@@ -338,5 +338,5 @@
+ lib_LTLIBRARIES = libmorph.la
+ libmorph_la_LDFLAGS = -version-info 1:0:0
+-pkginclude_HEADERS = mesh.h mesh_t.h mesh-getext.h  RgbaImage.h    my_malloc.h  spl-array.h  spline.h  tga.h  warp.h warp2.h relax.h resample.h  warp-gtk.h  
++pkginclude_HEADERS = braindead_msvc.h mesh.h mesh_t.h mesh-getext.h  RgbaImage.h    my_malloc.h  spl-array.h  spline.h  tga.h  warp.h warp2.h relax.h resample.h  warp-gtk.h  
+ libmorph_la_SOURCES = my_malloc.c     warp.c   \
+   mesh.c         spline.c   my_malloc.h  tga.c   tga.h  \

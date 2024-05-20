@@ -71,7 +71,7 @@ add_executable(clearbounds
 )
 
 target_link_libraries(warp-sabre
-    PRIVATE  ${ImageMagick_LIBRARIES}
+    PRIVATE ${ImageMagick_LIBRARIES}
     PRIVATE -lboost_system-mt
     PRIVATE -lmorph
     PRIVATE -lnewmat

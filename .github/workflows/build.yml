@@ -1,0 +1,119 @@
+name: Build
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: true
+
+    name: Windows
+    runs-on: windows-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: true
+        install: >-
+          diffutils
+          git
+          make
+          mingw-w64-ucrt-x86_64-cmake
+          mingw-w64-ucrt-x86_64-make
+          mingw-w64-ucrt-x86_64-gcc
+          mingw-w64-ucrt-x86_64-imagemagick
+          mingw-w64-ucrt-x86_64-boost
+          mingw-w64-ucrt-x86_64-libxml2
+          patch
+          unzip
+          zip
+
+    - name: Build newmat
+      run: |
+        mkdir -p deps/newmat
+        cd deps/newmat
+
+        echo "::group::Download newmat"
+        curl -L https://www.robertnz.net/ftp/newmat10.zip -o newmat10.zip
+        echo "::endgroup::"
+
+        echo "::group::Unzip newmat"
+        unzip newmat10.zip
+        echo "::endgroup::"
+
+        rm -f newmat10.zip
+        
+        echo "::group::Build newmat"
+        make -f nm_gnu.mak libnewmat.a
+        echo "::endgroup::"
+
+    - name: Build xmorph
+      run: |
+        mkdir -p deps/xmorph
+        cd deps/xmorph
+
+        echo "::group::Download xmorph"
+        curl -L https://master.dl.sourceforge.net/project/xmorph/xmorph/20060817/xmorph_20060817.tar.gz -o xmorph_20060817.tar.gz
+        echo "::endgroup::"
+
+        echo "::group::Unzip xmorph"
+        tar xfz xmorph_20060817.tar.gz
+        echo "::endgroup::"
+
+        rm -f xmorph_20060817.tar.gz
+
+        echo "::group::Build newmat"
+        cd xmorph-20060817
+
+        cd libmorph
+        patch < ../../../../.github/xmorph-makefile.patch
+        cd ..
+
+        ./configure --without-morph --without-xmorph --without-gtkmorph --without-tkmorph --without-x --disable-gtktest --enable-static --disable-shared CFLAGS=-Wno-error=implicit-function-declaration
+        make
+        make install
+        echo "::endgroup::"
+
+    - name: Build
+      run: |
+        export DEPS_DIR=`realpath deps`
+        mkdir build
+        cd build
+
+        # Note: CMake doesn't seem to be adding the ImageMagick libraries correctly, I've spent a while debugging this already but
+        # haven't got time to do any more. Hard-coding it for now, which should work but may break in future...
+        echo "::group::CMake"
+        cmake .. \
+          -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=$DEPS_DIR \
+          -DCMAKE_CXX_STANDARD_LIBRARIES=-L$DEPS_DIR/newmat\ -lMagickWand-7.Q16HDRI\ -lMagickCore-7.Q16HDRI \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        cmake --build .
+        echo "::endgroup::"
+
+    - name: Package
+      run: |
+        mkdir warp-sabre
+        cp build/*.exe AUTHORS COPYING INSTALL README \
+          /ucrt64/bin/{libgcc_s_seh-1,libwinpthread-1,libintl-8,libxml2-2,libMagickCore-7.Q16HDRI-10,libMagickWand-7.Q16HDRI-10,libstdc++-6,libboost_thread-mt}.dll \
+          warp-sabre/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: warp-sabre-windows
+        path: warp-sabre
