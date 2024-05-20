@@ -16,7 +16,7 @@ find_package(LibXml2 REQUIRED)
 
 include_directories(${LIBXML2_INCLUDE_DIR})
 
-add_library(libmorph STATIC
+add_library(morph STATIC
     src/libmorph/my_malloc.c
     src/libmorph/warp.c
     src/libmorph/mesh.c
@@ -29,7 +29,7 @@ add_library(libmorph STATIC
     src/libmorph/resample.c
 )
 
-target_compile_options(libmorph PRIVATE -DREAL=double)
+target_compile_options(morph PRIVATE -DREAL=double)
 
 add_library(newmat STATIC
     src/newmat-10/newmat1.cpp
