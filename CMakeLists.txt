@@ -56,8 +56,6 @@ add_library(newmat STATIC
     src/newmat-10/newmat9.cpp
 )
 
-target_compile_options(newmat PRIVATE -Duse_namespace)
-
 add_executable(warp-sabre
     src/ImageWarpByFunc.cpp
     src/ImgMagick.cpp
