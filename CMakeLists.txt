@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(warp-sabre LANGUAGES CXX)
+project(warp-sabre LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -15,6 +15,45 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 find_package(LibXml2 REQUIRED)
 
 include_directories(${LIBXML2_INCLUDE_DIR})
+
+add_library(libmorph STATIC
+    src/libmorph/my_malloc.c
+    src/libmorph/warp.c
+    src/libmorph/mesh.c
+    src/libmorph/spline.c
+    src/libmorph/tga.c
+    src/libmorph/RgbaImage.c
+    src/libmorph/spl-array.c
+    src/libmorph/warp2.c
+    src/libmorph/relax.c
+    src/libmorph/resample.c
+)
+
+target_compile_options(libmorph PRIVATE -DREAL=double)
+
+add_library(newmat STATIC
+    src/newmat-10/newmat1.cpp
+    src/newmat-10/newmat2.cpp
+    src/newmat-10/newmat3.cpp
+    src/newmat-10/newmat4.cpp
+    src/newmat-10/newmat5.cpp
+    src/newmat-10/newmat6.cpp
+    src/newmat-10/newmat7.cpp
+    src/newmat-10/newmat8.cpp
+    src/newmat-10/newmatex.cpp
+    src/newmat-10/bandmat.cpp
+    src/newmat-10/submat.cpp
+    src/newmat-10/myexcept.cpp
+    src/newmat-10/cholesky.cpp
+    src/newmat-10/evalue.cpp
+    src/newmat-10/fft.cpp
+    src/newmat-10/hholder.cpp
+    src/newmat-10/jacobi.cpp
+    src/newmat-10/newfft.cpp
+    src/newmat-10/sort.cpp
+    src/newmat-10/newmatrm.cpp
+    src/newmat-10/newmat9.cpp
+)
 
 add_executable(warp-sabre
     src/ImageWarpByFunc.cpp
@@ -70,6 +109,8 @@ add_executable(clearbounds
     src/Tile.cpp
     src/gbos1936/Gbos1936.cpp
 )
+
+message(NOTICE ${LibMorph_LIBRARIES})
 
 target_link_libraries(warp-sabre
     PRIVATE  ${ImageMagick_LIBRARIES}
