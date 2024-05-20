@@ -163,19 +163,4 @@ public:
 	};
 };
 
-class ImgSeqBase : public ImgFrameBase
-{
-public:
-	ImgSeqBase() : ImgFrameBase(){};
-	virtual ~ImgSeqBase(){};
-	virtual int ReloadCurrentFrame() { return -1; };
-	virtual int NextFrameReady() { return -1; };
-	virtual int GetNextFrame() { return -1; };
-
-	virtual int SeekFrameReady() { return -1; };
-	virtual int SeekToFrame(unsigned int frame) { return -1; };
-	virtual int GetFrameNumber() { return -1; };
-	virtual int GetDuration() { return -1; };
-};
-
 #endif /*IMGFRAMEBASE_H_*/

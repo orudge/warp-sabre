@@ -203,7 +203,7 @@ int RequestTileLoading(vector<class SourceKml> &src, class SourceKml &toLoad, in
 		else
 			cout << "done" << endl;
 	}
-	catch (std::bad_alloc)
+	catch (std::bad_alloc&)
 	{
 		// Intermittent memory failure. Relaunch the application again,
 		// as it will probably work.
