@@ -51,9 +51,12 @@ add_library(newmat STATIC
     src/newmat-10/jacobi.cpp
     src/newmat-10/newfft.cpp
     src/newmat-10/sort.cpp
+    src/newmat-10/svd.cpp
     src/newmat-10/newmatrm.cpp
     src/newmat-10/newmat9.cpp
 )
+
+target_compile_options(newmat PRIVATE -Duse_namespace)
 
 add_executable(warp-sabre
     src/ImageWarpByFunc.cpp
@@ -110,13 +113,20 @@ add_executable(clearbounds
     src/gbos1936/Gbos1936.cpp
 )
 
-message(NOTICE ${LibMorph_LIBRARIES})
+target_include_directories(warp-sabre PUBLIC
+    ${PROJECT_SOURCE_DIR}/libmorph
+    ${PROJECT_SOURCE_DIR}/newmat-10
+)
 
 target_link_libraries(warp-sabre
     PRIVATE  ${ImageMagick_LIBRARIES}
     PRIVATE -lboost_system-mt
-    PRIVATE -lmorph
-    PRIVATE -lnewmat
+    PRIVATE  morph
+    PRIVATE  newmat
+)
+
+target_include_directories(gentiles PUBLIC
+    ${PROJECT_SOURCE_DIR}/libmorph
 )
 
 target_link_libraries(gentiles
@@ -124,7 +134,11 @@ target_link_libraries(gentiles
     PRIVATE xml2
     PRIVATE -lboost_thread-mt
     PRIVATE -lboost_system-mt
-    PRIVATE -lmorph
+    PRIVATE  morph
+)
+
+target_include_directories(cleartiles PUBLIC
+    ${PROJECT_SOURCE_DIR}/libmorph
 )
 
 target_link_libraries(cleartiles
@@ -132,7 +146,11 @@ target_link_libraries(cleartiles
     PRIVATE xml2
     PRIVATE -lboost_thread-mt
     PRIVATE -lboost_system-mt
-    PRIVATE -lmorph
+    PRIVATE  morph
+)
+
+target_include_directories(clearbounds PUBLIC
+    ${PROJECT_SOURCE_DIR}/libmorph
 )
 
 target_link_libraries(clearbounds
@@ -140,5 +158,5 @@ target_link_libraries(clearbounds
     PRIVATE xml2
     PRIVATE -lboost_thread-mt
     PRIVATE -lboost_system-mt
-    PRIVATE -lmorph
+    PRIVATE  morph
 )
