@@ -5,8 +5,8 @@
 #include <vector>
 using namespace std;
 
-vector<double> PolyProject(vector<double> point, vector<double>pose, int order);
-//vector<double> PolyUnProject(vector<double> point, vector<double>pose);
+vector<double> PolyProject(vector<double> point, vector<double> pose, int order);
+// vector<double> PolyUnProject(vector<double> point, vector<double>pose);
 int CoeffSize(int order);
 int CalcOrderFitForNumConstraints(int numConstr);
 
@@ -16,8 +16,8 @@ public:
 	PolyProjection();
 	virtual ~PolyProjection();
 
-	//vector<double> Project(vector<double> point, vector<double>pose) {vector<double> empty; return empty;};
-	//vector<double> UnProject(vector<double> point, vector<double>pose) {vector<double> empty; return empty;};
+	// vector<double> Project(vector<double> point, vector<double>pose) {vector<double> empty; return empty;};
+	// vector<double> UnProject(vector<double> point, vector<double>pose) {vector<double> empty; return empty;};
 
 	void Clear();
 	void AddPoint(vector<double> original, vector<double> transformed);
@@ -25,7 +25,7 @@ public:
 	void AddPoint(double ox, double oy, vector<double> transformed);
 	vector<double> Estimate();
 
-	vector<vector<double> > originalPoints, transformedPoints;
+	vector<vector<double>> originalPoints, transformedPoints;
 	int order;
 };
 
@@ -38,5 +38,4 @@ public:
 	return out;
 }*/
 
-#endif //TRANSFORM_POLY_H
-
+#endif // TRANSFORM_POLY_H

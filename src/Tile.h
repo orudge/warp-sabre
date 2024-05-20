@@ -8,7 +8,7 @@ using namespace std;
 class Tile
 {
 public:
-	double latmin, latmax, lonmin,lonmax;
+	double latmin, latmax, lonmin, lonmax;
 	int sx, sy;
 	Tile();
 	virtual ~Tile();
@@ -17,5 +17,4 @@ public:
 	void UnProject(double x, double y, double &latOut, double &lonOut);
 };
 
-#endif ///TILE_H
-
+#endif /// TILE_H

@@ -11,12 +11,11 @@ public:
 	ImageWarpByFunc();
 	virtual ~ImageWarpByFunc();
 	int Warp(class ImgMagick &in,
-		class ImgMagick &out,
-		vector<double> (*transform)(vector<double> in, void *userPtr),
-		void *userPtr);
+			 class ImgMagick &out,
+			 vector<double> (*transform)(vector<double> in, void *userPtr),
+			 void *userPtr);
 
 	int xsize, ysize;
 };
 
-#endif //IMAGE_WARP_BY_FUNC_H
-
+#endif // IMAGE_WARP_BY_FUNC_H

@@ -129,7 +129,8 @@ void LLtoOSGBGrid(const double Lat, const double Long,
 				 + (61-58*T+T*T+600*C-330*eccPrimeSquared)*A*A*A*A*A*A/720)));
 	northing -= 100000.0;//false northing
 
-	//CoordsToOSGBSquare(easting, northing, OSGBGridSquare, OSGBEasting, OSGBNorthing);
+	//CoordsToOSGBSquare(easting, northing, OSGBGridSquare, OSGBEasting, OSGBNorthing);
+
 }
 
 
@@ -209,7 +210,7 @@ void OSGBtoLL(const double OSGBNorthing, const double OSGBEasting, const char* O
 	double LongOrigin = -2;
 	double LatOrigin = 49;
 	double LatOriginRad = LatOrigin * deg2rad;
-	double mu, phi1, phi1Rad;
+	double mu, phi1Rad;
 	double x, y;
 	int RefEasting, RefNorthing;
 
@@ -238,7 +239,6 @@ void OSGBtoLL(const double OSGBNorthing, const double OSGBEasting, const char* O
 	phi1Rad = mu	+ (3*e1/2-27*e1*e1*e1/32)*sin(2*mu) 
 				+ (21*e1*e1/16-55*e1*e1*e1*e1/32)*sin(4*mu)
 				+(151*e1*e1*e1/96)*sin(6*mu);
-	phi1 = phi1Rad*rad2deg;
 
 	N1 = a/sqrt(1-eccSquared*sin(phi1Rad)*sin(phi1Rad));
 	T1 = tan(phi1Rad)*tan(phi1Rad);

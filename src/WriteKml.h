@@ -7,7 +7,7 @@ using namespace std;
 class WriteKml
 {
 public:
-	double north, south, east,west;
+	double north, south, east, west;
 	string folderName, description;
 	string overlayName, href;
 
@@ -16,6 +16,4 @@ public:
 	void WriteToFile(const char *filename);
 };
 
-
-#endif //WRITE_KML_H
-
+#endif // WRITE_KML_H

@@ -11,7 +11,7 @@ public:
 	ImgMagick();
 	ImgMagick(const ImgMagick &a);
 	virtual ~ImgMagick();
-	ImgMagick& operator=(const ImgMagick& a);
+	ImgMagick &operator=(const ImgMagick &a);
 
 	virtual int Open(const char *filename);
 	virtual int Save(const char *filename);
@@ -19,15 +19,15 @@ public:
 	virtual void Close();
 	virtual int Ready();
 
-	//Pixel data
+	// Pixel data
 	virtual double GetPix(int x, int y, unsigned int channel) const;
 	virtual void SetPix(int x, int y, unsigned int channel, double val);
 
-	//Meta data
+	// Meta data
 	virtual int GetWidth() const;
 	virtual int GetHeight() const;
 	virtual int GetNumChannels() const;
-	
+
 	virtual int SetWidth(int val);
 	virtual int SetHeight(int val);
 	virtual int SetNumChannels(int val);
@@ -45,4 +45,4 @@ protected:
 	int channels;
 };
 
-#endif //IMG_MAGICK_H
+#endif // IMG_MAGICK_H

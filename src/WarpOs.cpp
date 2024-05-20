@@ -12,15 +12,15 @@ using namespace std;
 #include "gbos1936/Gbos1936.h"
 #ifdef WITH_OSTN02_PERL
 #include "OSTN02Perl.h"
-#endif //WITH_OSTN02_PERL
+#endif // WITH_OSTN02_PERL
 #ifdef WITH_OSTN02_PYTHON
 #include "PyOstn02.h"
-#endif //WITH_OSTN02_PYTHON
+#endif // WITH_OSTN02_PYTHON
 #include "Tile.h"
 #include <math.h>
 #include "StringUtils.h"
 
-//class HelmertConverter gConverter;
+// class HelmertConverter gConverter;
 #ifdef WITH_OSTN02_PYTHON
 class PyOstn02 gConverter;
 #else
@@ -28,8 +28,8 @@ class PyOstn02 gConverter;
 class OSTN02Perl gConverter;
 #else
 class HelmertConverter gConverter;
-#endif //WITH_OSTN02_PERL
-#endif //WITH_OSTN02_PYTHON
+#endif // WITH_OSTN02_PERL
+#endif // WITH_OSTN02_PYTHON
 
 class HelmertConverter gFallbackConverter;
 
@@ -72,7 +72,7 @@ vector<double> ProjRefToOutImg(vector<double> ref, PolyProjectArgs::ProjType pro
 	case PolyProjectArgs::OSGB:
 		if (args->mercatorOut)
 		{
-			//cout << "1 " << ref[0]<< "," << ref[1] << endl;
+			// cout << "1 " << ref[0]<< "," << ref[1] << endl;
 			try
 			{
 				gConverter.ConvertGbos1936ToWgs84(ref[0], ref[1], 0.0, lat, lon, alt);
@@ -117,9 +117,9 @@ vector<double> ProjRefToOutImg(vector<double> ref, PolyProjectArgs::ProjType pro
 
 	vector<double> pout;
 	tile.Project(lat, lon, pout);
-	//if(ref[0] >= 333000 && ref[1] <= 550000)
+	// if(ref[0] >= 333000 && ref[1] <= 550000)
 	{
-		//cout << "corner " << ref[0] << "," << ref[1] << "\t" << pout[0] << "," << pout[1] << endl;
+		// cout << "corner " << ref[0] << "," << ref[1] << "\t" << pout[0] << "," << pout[1] << endl;
 	}
 
 	return pout;
@@ -144,7 +144,7 @@ vector<double> PolyProjectWithPtr(vector<double> in, void *userPtr)
 
 void AddPointPoly(class Tile &tile, class PolyProjection &polyEst, double lat, double lon, double x, double y)
 {
-	//cout << "AddPointPoly " << lat << "," << lon << "," << x << "," << y << endl;
+	// cout << "AddPointPoly " << lat << "," << lon << "," << x << "," << y << endl;
 	vector<double> p;
 	tile.Project(lat, lon, p);
 	polyEst.AddPoint(x, y, p);
@@ -152,13 +152,13 @@ void AddPointPoly(class Tile &tile, class PolyProjection &polyEst, double lat, d
 
 void SplitGbosRef(string in, string &zone, long &easting, long &northing)
 {
-	//cout << in << endl;
+	// cout << in << endl;
 	zone = in.substr(0, 2);
 	if (in.length() != 8)
 		ThrowError<logic_error>("Unexpected length of map reference", __LINE__, __FILE__);
 	easting = atoi(in.substr(2, 3).c_str()) * 100;
 	northing = atoi(in.substr(5, 3).c_str()) * 100;
-	//cout << zone << "," << easting << "," << northing << endl;
+	// cout << zone << "," << easting << "," << northing << endl;
 }
 
 void DrawCross(class ImgFrameBase &img, int x, int y, double r, double g, double b)
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
 
 	ImgMagick::Init();
 
-	//Print name of transform to screen
+	// Print name of transform to screen
 	char transformName[100];
 	gConverter.GetTransformName(transformName, 100);
 	transformName[99] = '\0';
@@ -206,18 +206,18 @@ int main(int argc, char *argv[])
 	long OSGBNorthing;
 	long OSGBEasting;
 	char OSGBZone[4];
-	
+
 	cout << "Starting position(Lat, Long):  " << Lat << "   " << Long <<endl;
 
 	LLtoOSGB(Lat, Long, OSGBEasting, OSGBNorthing, OSGBZone);
 	cout << setiosflags(ios::showpoint | ios::fixed) << setprecision(6);
 	cout << "Calculated OSGB position(Northing, Easting, GridSquare):  ";
 	cout << OSGBZone << " " << OSGBEasting << " " << OSGBNorthing << endl;
-	
+
 	OSGBtoLL(OSGBNorthing, OSGBEasting, OSGBZone, Lat, Long);
 	cout << "Calculated Lat, Long position(Lat, Long):  " << Lat << "   " << Long << endl <<endl;*/
 
-	//Process program options
+	// Process program options
 	std::stringstream desc;
 	desc << "Allowed options:" << endl;
 	desc << "  -i [ --in ] arg       input image filename" << endl;
@@ -233,21 +233,23 @@ int main(int argc, char *argv[])
 	desc << "  -h [ --height ] arg   output height" << endl;
 	desc << "  --help                help message" << endl;
 
-	ProgramOptions po( argc, argv );
-	po.AddAlias( 'i', "in" );
-	po.AddAlias( 'p', "points" );
-	po.AddAlias( 'o', "out" );
-	po.AddAlias( 'v', "vis" );
-	po.AddAlias( 'f', "fit" );
-	po.AddAlias( 'w', "width" );
-	po.AddAlias( 'h', "height" );
+	ProgramOptions po(argc, argv);
+	po.AddAlias('i', "in");
+	po.AddAlias('p', "points");
+	po.AddAlias('o', "out");
+	po.AddAlias('v', "vis");
+	po.AddAlias('f', "fit");
+	po.AddAlias('w', "width");
+	po.AddAlias('h', "height");
 
-	if( po.HasArg( "help" ) ) {
+	if (po.HasArg("help"))
+	{
 		cout << desc.str() << endl;
 		exit(0);
 	}
-	if( po.HasArg( "in" ) ) {
-		inputImageFilename = po.GetArg( "in" );
+	if (po.HasArg("in"))
+	{
+		inputImageFilename = po.GetArg("in");
 	}
 	if (po.HasArg("points"))
 		inputPointsFilename = po.GetArg("points");
@@ -307,8 +309,8 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-	//Check basic parameters are set
-	//if(inputFilename.size() == 0)
+	// Check basic parameters are set
+	// if(inputFilename.size() == 0)
 	//{cout << "Error: input sequence must be specified" << endl << desc << endl; exit(0);
 
 	class Tile tile;
@@ -335,7 +337,7 @@ int main(int argc, char *argv[])
 		exit(-1);
 	}
 
-	//Read points
+	// Read points
 	double north = 0.0, south = 0.0, east = 0.0, west = 0.0;
 	int setBox = 0;
 	class PolyProjection srcImgToRef;
@@ -343,7 +345,7 @@ int main(int argc, char *argv[])
 	for (unsigned int i = 0; i < pointDef.NumLines(); i++)
 	{
 		class DelimitedFileLine &line = pointDef[i];
-		//cout << line.NumVals() << endl;
+		// cout << line.NumVals() << endl;
 
 		if (line.NumVals() == 5)
 		{
@@ -374,7 +376,7 @@ int main(int argc, char *argv[])
 				setBox = 1;
 			}
 		}
-		if (line.NumVals() == 4) //Read in GB OS national grid data
+		if (line.NumVals() == 4) // Read in GB OS national grid data
 		{
 			int dEasting = 0, dNorthing = 0;
 			double lat = -1.0, lon = -1.0, alt = -1.0;
@@ -384,7 +386,7 @@ int main(int argc, char *argv[])
 			{
 				string mapref = line[1].GetVals();
 				sscanf(mapref.c_str(), "%d:%d", &dEasting, &dNorthing);
-				//Add point to transform constraints
+				// Add point to transform constraints
 				gConverter.ConvertGbos1936ToWgs84(dEasting, dNorthing, 0.0, lat, lon, alt);
 			}
 			if (strcmp(line[0].GetVals(), "osi") == 0)
@@ -427,7 +429,7 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		if (line.NumVals() == 5) //Read in GB OS national grid data
+		if (line.NumVals() == 5) // Read in GB OS national grid data
 		{
 			double dEasting = 0, dNorthing = 0;
 			double imgX = line[3].GetVald();
@@ -470,7 +472,7 @@ int main(int argc, char *argv[])
 
 				cout << "conv " << dEasting << "," << dNorthing << "->" << lat << "," << lon << endl;
 
-				//Add point to transform constraints
+				// Add point to transform constraints
 				if (projType != PolyProjectArgs::Mercator)
 					srcImgToRef.AddPoint(imgX, imgY, dEasting, dNorthing);
 				else
@@ -500,7 +502,7 @@ int main(int argc, char *argv[])
 						east = dEasting;
 					setBox = 1;
 				}
-				//cout << "gbos " << dEasting << "," << dNorthing << "\t" << lat << "," << lon << endl;
+				// cout << "gbos " << dEasting << "," << dNorthing << "\t" << lat << "," << lon << endl;
 			}
 		}
 	}
@@ -517,7 +519,7 @@ int main(int argc, char *argv[])
 			int dEasting = 0, dNorthing = 0;
 			OSGBGridRefToRefCoords(corners[i].c_str(), dEasting, dNorthing);
 
-			//Add point to transform constraints
+			// Add point to transform constraints
 			double lat = -1.0, lon = -1.0, alt = -1.0;
 			gConverter.ConvertGbos1936ToWgs84(dEasting, dNorthing, 0.0, lat, lon, alt);
 
@@ -554,7 +556,7 @@ int main(int argc, char *argv[])
 	tile.lonmin = west;
 	tile.lonmax = east;
 
-	//Auto determine polynomial order
+	// Auto determine polynomial order
 	if (polynomialOrder == -1)
 	{
 		polynomialOrder = CalcOrderFitForNumConstraints(2 * srcImgToRef.originalPoints.size());
@@ -567,7 +569,7 @@ int main(int argc, char *argv[])
 
 	double coordWidth = tile.lonmax - tile.lonmin;
 	double coordHeight = tile.latmax - tile.latmin;
-	//Get aspect ratio based on coordinates
+	// Get aspect ratio based on coordinates
 	if (forceAspectCoord)
 	{
 		if (tile.sx < coordWidth * tile.sy / coordHeight)
@@ -586,14 +588,14 @@ int main(int argc, char *argv[])
 	endImage.SetWidth(tile.sx);
 	endImage.SetHeight(tile.sy);
 
-	//vector<double> test;
-	//test.push_back(333000);
-	//test.push_back(550000);
-	//vector<double> test2 = ProjRefToOutImg(test, tile);
-	//cout << test2[0] << "," << test2[1] << endl;
-	//exit(0);
+	// vector<double> test;
+	// test.push_back(333000);
+	// test.push_back(550000);
+	// vector<double> test2 = ProjRefToOutImg(test, tile);
+	// cout << test2[0] << "," << test2[1] << endl;
+	// exit(0);
 
-	//Transform image
+	// Transform image
 	class ImageWarpByFunc imageWarpByFunc;
 	imageWarpByFunc.xsize = 100;
 	imageWarpByFunc.ysize = 100;
@@ -609,13 +611,13 @@ int main(int argc, char *argv[])
 	if (visualiseErrors)
 		for (unsigned int i = 0; i < srcImgToRef.transformedPoints.size(); i++)
 		{
-			//unsigned char col[3] = {255,0,0};
-			//cout << polyEst.transformedPoints[i][0] << "," << polyEst.transformedPoints[i][1] << endl;
+			// unsigned char col[3] = {255,0,0};
+			// cout << polyEst.transformedPoints[i][0] << "," << polyEst.transformedPoints[i][1] << endl;
 			DrawCross(endImage, srcImgToRef.transformedPoints[i][0], srcImgToRef.transformedPoints[i][1], 255, 0, 0);
 
-			//endImage.draw_circle(polyEst.transformedPoints[i][0],polyEst.transformedPoints[i][1],3,col);
+			// endImage.draw_circle(polyEst.transformedPoints[i][0],polyEst.transformedPoints[i][1],3,col);
 
-			//vector<double> proj = ProjRefToOutImg(polyEst.originalPoints[i], tile);
+			// vector<double> proj = ProjRefToOutImg(polyEst.originalPoints[i], tile);
 			DrawCross(endImage, srcImgToRef.originalPoints[i][0], srcImgToRef.originalPoints[i][1], 0, 0, 255);
 		}
 
@@ -623,7 +625,7 @@ int main(int argc, char *argv[])
 	string mapOutFilename = outputFilename + ".jpg";
 	endImage.Save(mapOutFilename.c_str());
 
-	string mapOutFileNoPath; //Don't save the path into the kml output
+	string mapOutFileNoPath; // Don't save the path into the kml output
 	mapOutFileNoPath = RemoveFilePath(mapOutFilename.c_str());
 
 	if (mercatorOut)

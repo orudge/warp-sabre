@@ -9,6 +9,7 @@ include_directories(${ImageMagick_INCLUDE_DIRS})
 execute_process(COMMAND Magickwand-config --libs OUTPUT_VARIABLE ImageMagick_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
 add_compile_options(${ImageMagick_COMPILE_OPTIONS})
 add_compile_options(-DUSE_MT_GENTILES)
+add_compile_options(-Wall)
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 find_package(LibXml2 REQUIRED)

@@ -13,7 +13,7 @@ class DelimitedFileValue
 public:
 	string data;
 
-	DelimitedFileValue();	
+	DelimitedFileValue();
 	DelimitedFileValue(const DelimitedFileValue &a);
 	virtual ~DelimitedFileValue();
 	class DelimitedFileValue &operator=(const DelimitedFileValue &a);
@@ -54,7 +54,7 @@ public:
 	DelimitedFile(const class DelimitedFile &a);
 	virtual ~DelimitedFile();
 	class DelimitedFile &operator=(const class DelimitedFile &a);
-	
+
 	int Open(const char *filename);
 	unsigned int NumLines();
 	class DelimitedFileLine &GetLine(int num);
@@ -78,8 +78,8 @@ protected:
 
 vector<double> ExtractColumnFromDelimitedFile(class DelimitedFile &file, int colNum);
 void CopyColumnFromDelimitedFile(class DelimitedFile &file, int colNum, class DelimitedFile &out);
-void CopyColumnFromDelimitedFileVec(vector<class DelimitedFile> &files, 
-	int colNum, vector<class DelimitedFile> &out);
+void CopyColumnFromDelimitedFileVec(vector<class DelimitedFile> &files,
+									int colNum, vector<class DelimitedFile> &out);
 
 //**********************************************************************
 
@@ -102,18 +102,17 @@ public:
 	DelimitedFileStream(const class DelimitedFile &a);
 	virtual ~DelimitedFileStream();
 	class DelimitedFileStream &operator=(const class DelimitedFileStream &a);
-	
+
 	int Open(const char *filename);
 	void ToStart();
 	int GetLine(class DelimitedFileStreamCallback &callback);
 	int GetAllLines(class DelimitedFileStreamCallback &callback);
 	void ProcessLine(const char *line,
-		class DelimitedFileStreamCallback &callback);
+					 class DelimitedFileStreamCallback &callback);
 };
 
 //*********************************************************************
 
 int SeekInDelimitedFile(class DelimitedFile &file, int firstColValue, class DelimitedFileLine &lineOut);
 
-#endif //READ_DELIMITED_FILE_H
-
+#endif // READ_DELIMITED_FILE_H
