@@ -416,14 +416,27 @@ int TileJob::Render()
 
 	//outImg = tile;
 
-		if ( !dirExists( this->outFolder0.c_str() ) )
+		if ( !dirExists( this->outFolder0.c_str() ) ) {
+		#ifdef _WIN32
+			mkdir( this->outFolder0.c_str() );
+		#else
 			mkdir( this->outFolder0.c_str(), S_IRWXU );
-
-		if ( !dirExists( this->outFolder1.c_str() ) )
+		#endif
+		}
+		if ( !dirExists( this->outFolder1.c_str() ) ) {
+		#ifdef _WIN32
+			mkdir( this->outFolder1.c_str() );
+		#else
 			mkdir( this->outFolder1.c_str(), S_IRWXU );
-
-		if ( !dirExists( this->outFolder2.c_str() ) )
+		#endif
+		}
+		if ( !dirExists( this->outFolder2.c_str() ) ) {
+		#ifdef _WIN32
+			mkdir( this->outFolder1.c_str() );
+		#else
 			mkdir( this->outFolder2.c_str(), S_IRWXU );
+		#endif
+		}
 
 	   	outImg.Save(this->outFilename.c_str());
 		//temp.syncPixels();
