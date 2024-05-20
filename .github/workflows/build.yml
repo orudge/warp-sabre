@@ -1,0 +1,70 @@
+name: Build
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: true
+
+    name: Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: true
+        install: >-
+          diffutils
+          git
+          make
+          mingw-w64-ucrt-x86_64-cmake
+          mingw-w64-ucrt-x86_64-make
+          mingw-w64-ucrt-x86_64-gcc
+          mingw-w64-ucrt-x86_64-imagemagick
+          mingw-w64-ucrt-x86_64-boost
+          mingw-w64-ucrt-x86_64-libxml2
+          zip
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+
+        echo "::group::CMake"
+        cmake .. \
+          -DLIBXML2_INCLUDE_DIR=$MINGW_PREFIX/include/libxml2 \
+          -DImageMagick_COMPILE_OPTIONS=`MagickWand-config --cppflags | sed 's/ /;/g'` \
+          -DImageMagick_LIBRARIES=`MagickWand-config --libs | sed 's/ /;/g'`
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        cmake --build .
+        echo "::endgroup::"
+
+    - name: Package
+      run: |
+        mkdir warp-sabre
+        cp build/*.exe AUTHORS COPYING INSTALL README \
+          /ucrt64/bin/{libgcc_s_seh-1,libwinpthread-1,libintl-8,libxml2-2,libMagickCore-7.Q16HDRI-10,libMagickWand-7.Q16HDRI-10,libstdc++-6,libboost_thread-mt,libiconv-2}.dll \
+          /ucrt64/bin/{liblzma-5,libbz2-1,libfftw3-3,libfontconfig-1,libfreetype-6,liblcms2-2,liblqr-1-0,libltdl-7,libraqm-0,libexpat-1,libbrotlidec,libbrotlicommon}.dll \
+          /ucrt64/bin/{libharfbuzz-0,libglib-2.0-0,libpcre2-8-0,libgraphite2,libpng16-16,zlib1,libfribidi-0}.dll \
+          warp-sabre/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: warp-sabre-windows
+        path: warp-sabre

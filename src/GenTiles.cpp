@@ -37,6 +37,14 @@ using namespace std;
 #define OUT_TILE_WIDTH 256
 #define OUT_TILE_HEIGHT 256
 
+#if defined(_MSC_VER) || defined(_UCRT)
+	#include <direct.h>
+
+	#define MKDIR(x) _mkdir((x))
+#else
+	#define MKDIR(x) mkdir((x), S_IRWXU)
+#endif
+
 char **__g_argv;
 
 struct RescaleParams
@@ -453,29 +461,13 @@ int TileJob::Render()
 	// outImg = tile;
 
 	if (!dirExists(this->outFolder0.c_str()))
-	{
-#ifdef _WIN32
-		mkdir(this->outFolder0.c_str());
-#else
-		mkdir(this->outFolder0.c_str(), S_IRWXU);
-#endif
-	}
+		MKDIR(this->outFolder0.c_str());
+
 	if (!dirExists(this->outFolder1.c_str()))
-	{
-#ifdef _WIN32
-		mkdir(this->outFolder1.c_str());
-#else
-		mkdir(this->outFolder1.c_str(), S_IRWXU);
-#endif
-	}
+		MKDIR(this->outFolder1.c_str());
+
 	if (!dirExists(this->outFolder2.c_str()))
-	{
-#ifdef _WIN32
-		mkdir(this->outFolder2.c_str());
-#else
-		mkdir(this->outFolder2.c_str(), S_IRWXU);
-#endif
-	}
+		MKDIR(this->outFolder2.c_str());
 
 	outImg.Save(this->outFilename.c_str());
 	// temp.syncPixels();
