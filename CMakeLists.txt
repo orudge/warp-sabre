@@ -4,7 +4,7 @@ project(warp-sabre LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package(ImageMagick REQUIRED COMPONENTS MagickWand)
+find_package(ImageMagick REQUIRED COMPONENTS Magick++)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 execute_process(COMMAND Magickwand-config --libs OUTPUT_VARIABLE ImageMagick_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
 add_compile_options(${ImageMagick_COMPILE_OPTIONS})
@@ -117,10 +117,10 @@ target_include_directories(warp-sabre PUBLIC
 )
 
 target_link_libraries(warp-sabre
-    PRIVATE  ${ImageMagick_LIBRARIES}
-    PRIVATE -lboost_system-mt
-    PRIVATE  morph
-    PRIVATE  newmat
+    PRIVATE ${ImageMagick_LIBRARIES}
+    PRIVATE Boost::system
+    PRIVATE morph
+    PRIVATE newmat
 )
 
 target_include_directories(gentiles PUBLIC
@@ -130,9 +130,9 @@ target_include_directories(gentiles PUBLIC
 target_link_libraries(gentiles
     PRIVATE ${ImageMagick_LIBRARIES}
     PRIVATE xml2
-    PRIVATE -lboost_thread-mt
-    PRIVATE -lboost_system-mt
-    PRIVATE  morph
+    PRIVATE Boost::thread
+    PRIVATE Boost::system
+    PRIVATE morph
 )
 
 target_include_directories(cleartiles PUBLIC
@@ -142,9 +142,9 @@ target_include_directories(cleartiles PUBLIC
 target_link_libraries(cleartiles
     PRIVATE ${ImageMagick_LIBRARIES}
     PRIVATE xml2
-    PRIVATE -lboost_thread-mt
-    PRIVATE -lboost_system-mt
-    PRIVATE  morph
+    PRIVATE Boost::thread
+    PRIVATE Boost::system
+    PRIVATE morph
 )
 
 target_include_directories(clearbounds PUBLIC
@@ -154,7 +154,7 @@ target_include_directories(clearbounds PUBLIC
 target_link_libraries(clearbounds
     PRIVATE ${ImageMagick_LIBRARIES}
     PRIVATE xml2
-    PRIVATE -lboost_thread-mt
-    PRIVATE -lboost_system-mt
-    PRIVATE  morph
+    PRIVATE Boost::thread
+    PRIVATE Boost::system
+    PRIVATE morph
 )
