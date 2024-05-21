@@ -471,7 +471,7 @@ int TileJob::Render()
 	if (!dirExists(this->outFolder2.c_str()))
 	{
 #ifdef _WIN32
-		mkdir(this->outFolder1.c_str());
+		mkdir(this->outFolder2.c_str());
 #else
 		mkdir(this->outFolder2.c_str(), S_IRWXU);
 #endif
