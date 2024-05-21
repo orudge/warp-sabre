@@ -2,7 +2,7 @@
 #include "ImageWarpByFunc.h"
 extern "C"
 {
-#include <xmorph/warp2.h>
+#include "libmorph/warp2.h"
 }
 #include <iostream>
 

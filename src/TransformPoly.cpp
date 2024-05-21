@@ -1,6 +1,6 @@
 
 #include "TransformPoly.h"
-#include <newmat/newmat.h>
+#include "newmat-10/newmat.h"
 #include "ErrorHandling.h"
 #include <iostream>
 #include <math.h>
