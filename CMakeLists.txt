@@ -116,7 +116,7 @@ target_include_directories(warp-sabre PUBLIC
 )
 
 target_link_libraries(warp-sabre
-    PRIVATE ${ImageMagick_LIBRARIES}
+    PRIVATE ImageMagick::MagickWand
     PRIVATE Boost::system
     PRIVATE morph
     PRIVATE newmat
@@ -127,7 +127,7 @@ target_include_directories(gentiles PUBLIC
 )
 
 target_link_libraries(gentiles
-    PRIVATE ${ImageMagick_LIBRARIES}
+    PRIVATE ImageMagick::MagickWand
     PRIVATE xml2
     PRIVATE Boost::thread
     PRIVATE Boost::system
@@ -139,7 +139,7 @@ target_include_directories(cleartiles PUBLIC
 )
 
 target_link_libraries(cleartiles
-    PRIVATE ${ImageMagick_LIBRARIES}
+    PRIVATE ImageMagick::MagickWand
     PRIVATE xml2
     PRIVATE Boost::thread
     PRIVATE Boost::system
@@ -151,7 +151,7 @@ target_include_directories(clearbounds PUBLIC
 )
 
 target_link_libraries(clearbounds
-    PRIVATE ${ImageMagick_LIBRARIES}
+    PRIVATE ImageMagick::MagickWand
     PRIVATE xml2
     PRIVATE Boost::thread
     PRIVATE Boost::system
