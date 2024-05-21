@@ -1,51 +1,34 @@
 The following libraries are required:
 * Boost - for odds and ends (mainly used for parsing command line arguments)
-* ImageMagick - for loading and saving images
+* ImageMagick 7 - for loading and saving images
 * LibXML - for parsing Google Earth KML files
 * Newmat - for the matrix transformations used when rectifying map images
 * Xmorph - does the job of physically moving pixels in an image when
            rectifying it
 
+Newmat and Xmorph lib are now included as part of the build process. The other libraries
+are bundled as standard in most distributions
+
 ==Linux==
 For Debian Linux, you should be able to run :
-sudo apt-get install libboost-dev libmorph-dev libmagickwand-dev g++ libxml-dev libnewmat10-dev
+sudo apt-get install cmake g++ libboost-dev libboost-system-dev libboost-thread-dev libxml-dev
 
-To build, type:
-mkdir build
-cd build
-cmake ..
-make
-sudo make install
+ImageMagick 7 is not bundled with Debian, so must be built from source.
+See https://imagemagick.org/script/install-source.php
+
+To build, run build_linux.sh
 
 ==macOS==
 For macOS using homebrew:
-brew install magick++ boost xquartz
-Newmat and Xmorph must be installed manually into the homebrew directories
-eg: /usr/local/lib for X86_64, /opt/homebrew/lib for arm64
+brew install cmake imagemagick boost libxml2
 
-To build, type:
-mkdir build
-cd build
-
-(for x64) cmake -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/usr/local/include -DCMAKE_CXX_STANDARD_LIBRARIES=-L/usr/local/lib ..
-(for arm64) cmake -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/opt/homebrew/include -DCMAKE_CXX_STANDARD_LIBRARIES=-L/opt/homebrew/lib ..
+To build, run build_homebrew.sh
 
 make
 sudo make install
 
 ==Windows==
 For Windows using mingw64
-pacman -S imagemagick boost
-Newmat and Xormph must be compiled and installed manually
+pacman -S cmake mingw-w64-[platform]-x86_64-imagemagick mingw-w64-[platform]-x86_64-boost xml2
 
-Mingw64 doesn't play well with unix style file paths :-(
-
-To build, type:
-mkdir build
-cd build
-
-cmake \
-    -DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/mingw64/include \
-    -DCMAKE_CXX_STANDARD_LIBRARIES=-L/mingw64/lib \
-    -DImageMagick_INCLUDE_DIRS=/mingw64/include/ImageMagick-7 \
-    -DLIBXML2_INCLUDE_DIR=/mingw64/include/libxml2 ..
+To build, run build_mingw.sh
